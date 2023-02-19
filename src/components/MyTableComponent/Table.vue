@@ -14,7 +14,7 @@
             <div v-if="column.template">
               <slot :rowData="{...dataRow, ColumnIndex: columnIndex, RowIndex: dataIndex} " :name="column.template" />
             </div>
-            <div v-else>{{ dataRow[column.field] }}</div>
+            <div v-else>{{ shortenString(dataRow[column.field]) }}</div>
           </td>
         </tr>
       </tbody>
@@ -33,6 +33,18 @@ export default {
       type: Array,
       default: () => []
     }
+  },
+  methods: {
+    shortenString(str) {
+      if (str.length <= 16) {
+        return str
+      } else {
+        const firstThree = str.slice(0, 12)
+        const lastThree = str.slice(-3)
+        return `${firstThree}...${lastThree}`
+      }
+    }
+
   }
 }
 </script>
@@ -83,13 +95,8 @@ $--space-3: 24px;
           border-bottom: 1px solid rgb(81, 81, 81);
           padding: 16px;
           color: rgb(255, 255, 255);
-          text-align: center;
+          text-align: left;
         }
-      }
-      .action {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
       }
     }
   }

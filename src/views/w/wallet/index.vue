@@ -11,7 +11,7 @@
       :data-source="wallets"
     >
       <template v-slot:required="{rowData}">
-        <div class="action-item"><div>{{ rowData.numConfirmationsRequired }}</div><button class="btn btn-edit" @click="deposit(columnData)">Edit</button></div>
+        <div class="action-item"><div class="row-text">{{ rowData.numConfirmationsRequired }}</div><button class="btn btn-edit" @click="deposit(columnData)">Edit</button></div>
       </template>
       <template v-slot:action="{rowData}">
         <div class="action">
@@ -255,10 +255,19 @@ $--space-3: 24px;
       }
     }
  }
+ .action {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+ }
  .action-item {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: flex-start;
+  gap: 60px;
   align-items: center;
+  .row-text {
+    margin-left: 24px;
+  }
  }
 }
 </style>
