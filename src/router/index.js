@@ -200,7 +200,7 @@ export const asyncRoutes = [
     children: [
       {
         path: 'list',
-        component: () => import('@/views/wallet/index'),
+        component: () => import('@/views/w/wallet/index'),
         name: 'Wallet',
         meta: {
           title: 'Wallet',
@@ -208,7 +208,51 @@ export const asyncRoutes = [
         }
       }
     ]
-
+  },
+  {
+    path: '/token',
+    component: Layout,
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/w/token/index'),
+        name: 'Token',
+        meta: {
+          title: 'Token',
+          icon: 'el-icon-wallet'
+        }
+      }
+    ]
+  },
+  {
+    path: '/owner',
+    component: Layout,
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/w/owner/index'),
+        name: 'Wallet',
+        meta: {
+          title: 'Owner',
+          icon: 'el-icon-wallet'
+        }
+      }
+    ]
+  },
+  {
+    path: '/transaction',
+    component: Layout,
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/w/transaction/index'),
+        name: 'Transaction',
+        meta: {
+          title: 'Transaction',
+          icon: 'el-icon-wallet'
+        }
+      }
+    ]
   },
 
   {

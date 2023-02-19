@@ -12,7 +12,7 @@ const state = {
 
 const mutations = {
   SHOW_SIDEBAR: state => {
-    state.showSidebar = false
+    state.showSidebar = true
     if (state.showSidebar) {
       Cookies.set('sidebarStatus', 1)
     } else {

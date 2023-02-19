@@ -1,52 +1,51 @@
 <template>
   <div class="navbar">
-    <hamburger
-      id="hamburger-container"
-      :is-active="sidebar.opened"
-      class="hamburger-container"
-      @toggleClick="toggleSideBar"
-    />
+    <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
 
     <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
 
     <div class="right-menu">
-      <div v-if="!currentAccount">
-        <button class="primaryButton" @click="connectWallet">Connect Wallet</button>
+      <div v-if="!currentAccount" class="right-menu-item btn-container">
+        <button class="btn-connect" @click="connectWallet">Connect Wallet</button>
       </div>
-      <div v-if="!currentContract">
-        <button class="primaryButton" @click="attachContract">Attach Contract</button>
+      <div v-else>
+        <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
+          <div class="avatar-wrapper">
+            <img :src="avatar + '?imageView2/1/w/80/h/80'" class="user-avatar">
+            <div class="user-name">gor: {{ currentAccount }}</div>
+          </div>
+          <el-dropdown-menu slot="dropdown" class="dropdown-menu">
+            <router-link to="/profile/index">
+              <el-dropdown-item>Profile</el-dropdown-item>
+            </router-link>
+            <router-link to="/">
+              <el-dropdown-item>Dashboard</el-dropdown-item>
+            </router-link>
+            <el-dropdown-item divided @click.native="logout">
+              <span style="display:block;">Log Out</span>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+        <template v-if="device !== 'mobile'">
+          <!-- <div class="right-menu-item">
+              <div v-if="!currentContract">
+                <el-button class="primaryButton" @click="attachContract">Attach Contract</el-button>
+              </div>
+            </div> -->
+          <!-- <search id="header-search" class="right-menu-item" /> -->
+
+          <error-log class="errLog-container right-menu-item hover-effect" />
+
+          <!-- <screenfull id="screenfull" class="right-menu-item hover-effect" /> -->
+
+          <!-- <el-tooltip content="Global Size" effect="dark" placement="bottom">
+                  <size-select id="size-select" class="right-menu-item hover-effect" />
+                </el-tooltip> -->
+
+          <el-tag effect="dark" size="small" class="right-menu-item tag-coin">Goerli</el-tag>
+
+        </template>
       </div>
-      <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
-        <div class="avatar-wrapper">
-          <img :src="avatar + '?imageView2/1/w/80/h/80'" class="user-avatar">
-          <i class="el-icon-caret-bottom" />
-        </div>
-        <el-dropdown-menu slot="dropdown" class="dropdown-menu">
-          <router-link to="/profile/index">
-            <el-dropdown-item>Profile</el-dropdown-item>
-          </router-link>
-          <router-link to="/">
-            <el-dropdown-item>Dashboard</el-dropdown-item>
-          </router-link>
-          <el-dropdown-item divided @click.native="logout">
-            <span style="display:block;">Log Out</span>
-          </el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
-      <template v-if="device !== 'mobile'">
-        <!-- <search id="header-search" class="right-menu-item" /> -->
-
-        <error-log class="errLog-container right-menu-item hover-effect" />
-
-        <!-- <screenfull id="screenfull" class="right-menu-item hover-effect" /> -->
-
-        <!-- <el-tooltip content="Global Size" effect="dark" placement="bottom">
-              <size-select id="size-select" class="right-menu-item hover-effect" />
-            </el-tooltip> -->
-
-        <el-tag effect="dark" size="small" class="right-menu-item tag-coin">Goerli</el-tag>
-
-      </template>
     </div>
   </div>
 </template>
@@ -150,14 +149,15 @@ export default {
 
 <style lang="scss" scoped>
 @import "../../styles/variables.scss";
+
 .navbar {
   height: 50px;
   overflow: hidden;
   position: relative;
   background-color: $--color-background-paper;
   border-bottom: 2px solid $--color-border-light;
-  /* box-shadow: 0 1px 4px rgba(48, 48, 51, .08); */
 
+  /* box-shadow: 0 1px 4px rgba(48, 48, 51, .08); */
   .hamburger-container {
     line-height: 46px;
     height: 100%;
@@ -198,11 +198,35 @@ export default {
       border-radius: 4px;
       padding: 4px 8px;
     }
+    .btn-connect {
+      outline: 0px;
+      border: 0px rgb(18, 255, 128);
+      margin: 0px;
+      vertical-align: middle;
+      min-width: 64px;
+      color: rgba(0, 0, 0, 0.87);
+      background-color: rgb(18, 255, 128);
+      box-shadow: rgb(161 163 167) 0px 0px 2px;
+      border-radius: 6px;
+      font-weight: bold;
+      line-height: 1.25;
+      font-size: 14px;
+      padding: 8px 24px;
+      &:hover {
+        text-decoration: none;
+        background-color: rgb(12, 178, 89);
+      }
+    }
 
+    .btn-container {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+    }
     .right-menu-item {
-      /* display: inline-block; */
+      display: inline-block;
       padding: 0 8px;
-      /* height: 100%; */
+      height: 100%;
       /* font-size: 18px; */
       /* color: #5a5e66; */
       margin-right: 20px;
@@ -222,6 +246,10 @@ export default {
     .avatar-container {
 
       .avatar-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
         margin-top: 5px;
         position: relative;
 
@@ -230,6 +258,10 @@ export default {
           width: 40px;
           height: 40px;
           border-radius: 10px;
+        }
+
+        .user-name {
+          color: rgb(255, 255, 255);
         }
 
         .el-icon-caret-bottom {

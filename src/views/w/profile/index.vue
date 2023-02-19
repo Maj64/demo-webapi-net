@@ -21,18 +21,31 @@
       </template>
     </Table>
     <Form :dialog-data="dialogData" :data-form="wallet" :form-list="formList">
+      <template v-slot:owners>
+        <div class="owner-header">
+          <h3>Owners</h3>
+          <div class="action-item"><button class="btn">Add</button></div>
+        </div>
+        <Table :columns="columnOwner" :data-source="wallet.owners">
+          <template v-slot:input>
+            <el-input v-modal="owner.name" type="text" />
+          </template>
+          <template v-slot:action>
+            <div class="action-item"><button class="btn btn-danger">Remove</button></div>
+          </template>
+        </Table>
+      </template>
       <template v-slot:footerDialog>
         <el-button type="info" class="btn-normal btn-cancel" plain @click="handleCancel">Cancel</el-button>
         <el-button type="success" class="btn" @click="handleAddSubmit">Add</el-button>
       </template>
     </Form>
   </div>
-
 </template>
 
 <script>
-import Table from '../../components/MyTableComponent/Table.vue'
-import Form from '../../components/MyDialogComponent/Form.vue'
+import Table from '@/components/MyTableComponent/Table.vue'
+import Form from '@/components/MyDialogComponent/Form.vue'
 
 export default {
   name: 'Wallet',
@@ -51,13 +64,19 @@ export default {
         { type: 'text', label: 'Name', field: 'name' },
         { type: 'text', label: 'Address', field: 'address' },
         { type: 'number', label: 'Balance', field: 'balance' },
-        { type: 'number', label: 'Required Confirmations', field: 'numConfirmationsRequired' }
+        { type: 'number', label: 'Required Confirmations', field: 'numConfirmationsRequired' },
+        { template: 'owners' }
       ],
       columns: [
         { name: 'Name', field: 'name' },
         { name: 'Address', field: 'address' },
         { name: 'Balance', field: 'balance' },
         { name: 'Required Confirmations', field: 'numConfirmationsRequired', template: 'required' },
+        { name: 'Action', template: 'action' }
+      ],
+      columnOwner: [
+        { name: 'Name', field: 'name', template: 'input' },
+        { name: 'Address', field: 'address', template: 'input' },
         { name: 'Action', template: 'action' }
       ],
       wallets: [
@@ -72,7 +91,15 @@ export default {
         name: '',
         address: '',
         balance: '',
-        numConfirmationsRequired: ''
+        numConfirmationsRequired: '',
+        owners: [{
+          name: '',
+          address: ''
+        }]
+      },
+      owner: {
+        name: '',
+        address: ''
       }
     }
   },
@@ -105,6 +132,11 @@ $--color-border-light: #303033;
 $--space-3: 24px;
 .app-container {
 
+  .owner-header {
+    display: flex;
+    justify-content: space-between;
+  }
+
   .modal-container {
     .modal {
       background-color: rgba(99, 102, 105, 0.75);
@@ -134,6 +166,13 @@ $--space-3: 24px;
     &:hover {
       text-decoration: none;
       background-color: rgb(12, 178, 89);
+    }
+  }
+  .btn-danger {
+    color: #e4e8ef;
+    background-color: rgb(198, 32, 35);
+    &:hover {
+      background-color: rgba(198, 32, 35, 0.6);
     }
   }
   .btn-normal {
