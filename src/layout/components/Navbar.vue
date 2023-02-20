@@ -15,11 +15,11 @@
             <div class="user-name">gor: {{ currentAccount }}</div>
           </div>
           <el-dropdown-menu slot="dropdown" class="dropdown-menu">
-            <router-link to="/profile/index">
-              <el-dropdown-item>Profile</el-dropdown-item>
-            </router-link>
-            <router-link to="/">
-              <el-dropdown-item>Dashboard</el-dropdown-item>
+            <el-dropdown-item @click.native="handleShowProfile">Profile</el-dropdown-item>
+            <!-- <router-link to="/profile/index">
+            </router-link> -->
+            <router-link to="/wallet/list">
+              <el-dropdown-item divided>Wallets</el-dropdown-item>
             </router-link>
             <el-dropdown-item divided @click.native="logout">
               <span style="display:block;">Log Out</span>
@@ -47,6 +47,32 @@
         </template>
       </div>
     </div>
+
+    <div class="modal-container">
+      <el-dialog
+        :title="dialogData.title"
+        class="modal"
+        :visible.sync="dialogData.dialogVisible"
+        :close-on-click-modal="false"
+        :width="dialogData.width"
+        :top="dialogData.marginTop"
+        :before-close="handleClose"
+      >
+        <div class="profile-container">
+          <div class="profile-avt-wrapper">
+            <img :src="avatar + '?imageView2/1/w/80/h/80'" class="profile-avt-item">
+            <div class="profile-name">{{ profile.name }}</div>
+          </div>
+          <div class="profile-content">
+            <div class="profile-address">gor:{{ profile.address }}</div>
+            <div class="profile-info">
+              <div class="info-item">Wallet <div>{{ profile.wallet }}</div></div>
+              <div class="info-item">Connected network <div>{{ profile.connectedNetwork }}</div></div>
+            </div>
+          </div>
+        </div>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -72,7 +98,19 @@ export default {
     return {
       currentAccount: null,
       currentContract: null,
-      contractAddress: '<Your deployed contract Address>'
+      contractAddress: '<Your deployed contract Address>',
+      dialogData: {
+        title: 'Profile',
+        dialogVisible: false,
+        width: '30%',
+        marginTop: '12vh'
+      },
+      profile: {
+        name: 'Human',
+        address: '',
+        wallet: 'Metamask',
+        connectedNetwork: 'Goerli'
+      }
     }
   },
   computed: {
@@ -125,6 +163,23 @@ export default {
       } catch (error) {
         console.log(error)
       }
+    },
+    shortenString(str) {
+      if (str.length <= 28) {
+        return str
+      } else {
+        const firstThree = str.slice(0, 20)
+        const lastThree = str.slice(-5)
+        return `${firstThree}...${lastThree}`
+      }
+    },
+    handleShowProfile() {
+      this.dialogData = { ...this.dialogData, dialogVisible: true }
+      this.profile = { ...this.profile, address: this.shortenString(this.currentAccount) }
+    },
+    handleClose() {
+      this.dialogData = { ...this.dialogData, dialogVisible: false }
+      this.profile = { ...this.profile, address: this.shortenString(this.currentAccount) }
     },
     attachContract: async function() {
       /* const provider = new this.$ethers.providers.JsonRpcProvider('http://127.0.0.1:7545')
@@ -271,6 +326,64 @@ export default {
           right: -20px;
           top: 25px;
           font-size: 12px;
+        }
+      }
+    }
+
+  }
+  .profile-container {
+    display: flex;
+    color: rgb(255, 255, 255);
+    .profile-avt-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      justify-content: flex-end;
+      align-items: center;
+      flex: 3;
+      border-right: 1px solid #515151;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #515151;
+      .profile-avt-item {
+        border-radius: 50%;
+        width: 80px;
+        height: 80px;
+      }
+      .profile-name {
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 1.1;
+        text-align: justify;
+        font-family: "DM Sans", sans-serif;
+      }
+    }
+    .profile-content {
+      flex: 7;
+      display: flex;
+      gap: 10px;
+      flex-direction: column;
+
+      .profile-address {
+        flex: 2;
+        font-size: 16px;
+        border-bottom: 1px solid #515151;
+        padding: 8px 16px;
+      }
+
+      .profile-info {
+        flex: 8;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: 14px;
+        .info-item {
+          display: flex;
+          flex: 0.5;
+          width: 100%;
+          justify-content: space-between;
+          border-bottom: 1px solid #515151;
+          padding: 4px 16px;
         }
       }
     }

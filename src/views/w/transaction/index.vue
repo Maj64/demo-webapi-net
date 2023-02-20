@@ -7,8 +7,8 @@
       :columns="columns"
       :data-source="transactions"
     >
-      <template v-slot:required="{rowData}">
-        <div class="action-item"><div>{{ rowData.numConfirmationsRequired }}</div><button class="btn btn-edit" @click="deposit(columnData)">Confirm</button></div>
+      <template v-slot:required>
+        <div class="action-item"><div>List Owners</div><button class="btn btn-edit" @click="deposit(columnData)">Confirm</button></div>
       </template>
     </Table>
     <!-- <Form :dialog-data="dialogData" :data-form="transaction" :form-list="formList">
@@ -150,8 +150,9 @@ $--space-3: 24px;
  }
  .action-item {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: flex-start;
   align-items: center;
+  gap: 10px;
  }
 }
 </style>

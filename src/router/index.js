@@ -73,13 +73,13 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
+    redirect: '/home',
     children: [
       {
-        path: 'dashboard',
-        component: () => import('@/views/dashboard/index'),
-        name: 'Dashboard',
-        meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
+        path: 'home',
+        component: () => import('@/views/w/home'),
+        name: 'Home',
+        meta: { title: 'Home', icon: 'el-icon-s-home', affix: true }
       }
     ]
   },
@@ -219,7 +219,7 @@ export const asyncRoutes = [
         name: 'Token',
         meta: {
           title: 'Token',
-          icon: 'el-icon-wallet'
+          icon: 'el-icon-coin'
         }
       }
     ]
@@ -234,7 +234,7 @@ export const asyncRoutes = [
         name: 'Wallet',
         meta: {
           title: 'Owner',
-          icon: 'el-icon-wallet'
+          icon: 'el-icon-s-custom'
         }
       }
     ]
@@ -249,7 +249,7 @@ export const asyncRoutes = [
         name: 'Transaction',
         meta: {
           title: 'Transaction',
-          icon: 'el-icon-wallet'
+          icon: 'el-icon-guide'
         }
       }
     ]

@@ -69,7 +69,7 @@ export default {
       ],
       columns: [
         { name: 'Name', field: 'name' },
-        { name: 'Address', field: 'address' },
+        { name: 'Address', field: 'address', unShorten: true },
         { name: 'Balance', field: 'balance' },
         { name: 'Required Confirmations', field: 'numConfirmationsRequired', template: 'required' },
         { name: 'Action', template: 'action' }
@@ -254,11 +254,6 @@ $--space-3: 24px;
         background-color: rgb(12, 178, 89);
       }
     }
- }
- .action {
-  display: flex;
-  justify-content: flex-start;
-  gap: 10px;
  }
  .action-item {
   display: flex;

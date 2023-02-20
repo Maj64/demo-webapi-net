@@ -41,7 +41,7 @@ export default {
       ],
       columns: [
         { name: 'Name', field: 'name' },
-        { name: 'Address', field: 'address' }
+        { name: 'Address', field: 'address', unShorten: true }
       ],
       owners: [
         {

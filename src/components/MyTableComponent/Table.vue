@@ -14,7 +14,14 @@
             <div v-if="column.template">
               <slot :rowData="{...dataRow, ColumnIndex: columnIndex, RowIndex: dataIndex} " :name="column.template" />
             </div>
-            <div v-else>{{ shortenString(dataRow[column.field]) }}</div>
+            <div v-else>
+              <div v-if="column.unShorten">
+                {{ dataRow[column.field] }}
+              </div>
+              <div v-else>
+                {{ shortenString(dataRow[column.field]) }}
+              </div>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -44,7 +51,6 @@ export default {
         return `${firstThree}...${lastThree}`
       }
     }
-
   }
 }
 </script>
@@ -99,6 +105,11 @@ $--space-3: 24px;
         }
       }
     }
+  }
+  .action {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
   }
  }
 </style>
