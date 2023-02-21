@@ -11,7 +11,9 @@
       :data-source="wallets"
     >
       <template v-slot:required="{rowData}">
-        <div class="action-item"><div class="row-text">{{ rowData.numConfirmationsRequired }}</div><button class="btn btn-edit" @click="deposit(columnData)">Edit</button></div>
+        <div class="action-item">
+          <div class="row-text">{{ rowData.numConfirmationsRequired }}</div>
+          <button class="btn btn-edit" @click="handleEdit(rowData)">Edit</button></div>
       </template>
       <template v-slot:action="{rowData}">
         <div class="action">
@@ -20,7 +22,7 @@
         </div>
       </template>
     </Table>
-    <Form :dialog-data="dialogData" :data-form="wallet" :form-list="formList">
+    <Form :dialog-data="dialogData" :data-form="dataForm" :form-list="formData">
       <template v-slot:owners>
         <div class="owner-header">
           <h3>Owners</h3>
@@ -58,8 +60,11 @@ export default {
       dialogData: {
         title: '',
         dialogVisible: false,
-        template: 'footerDialog'
+        template: 'footerDialog',
+        type: null
       },
+      dataForm: {},
+      formData: [],
       formList: [
         { type: 'text', label: 'Name', field: 'name' },
         { type: 'text', label: 'Address', field: 'address' },
@@ -104,18 +109,50 @@ export default {
     }
   },
   methods: {
+    resetData() {
+      this.dialogData = {
+        title: '',
+        dialogVisible: false,
+        template: 'footerDialog',
+        type: null
+      }
+      this.dataForm = {}
+      this.formData = {}
+    },
     handleAdd() {
       this.dialogData = {
         title: 'Add',
         dialogVisible: true,
-        template: 'footerDialog'
+        template: 'footerDialog',
+        type: 'add'
       }
+      this.dataForm = { ...this.wallet }
+      this.formData = { ...this.formList }
     },
     handleCancel() {
-      this.dialogVisible = false
+      this.resetData()
     },
     handleAddSubmit() {
-      this.wallets.push(this.wallet)
+      this.wallets.push(this.dataForm)
+      this.resetData()
+    },
+    handleEdit(rowData) {
+      console.log(rowData)
+      this.dialogData = {
+        ...this.dialogData,
+        title: 'Edit Number Required Confirmations',
+        dialogVisible: true,
+        template: 'footerDialog',
+        type: 'edit'
+      }
+      this.dataForm = {
+        numConfirmationsRequired: rowData.numConfirmationsRequired
+      }
+      this.formData = [{
+        type: 'number',
+        label: 'Required Confirmations',
+        field: 'numConfirmationsRequired'
+      }]
     },
     deposit(columnData) {
       console.log(columnData)

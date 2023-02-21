@@ -110,7 +110,8 @@ export default {
         address: '',
         wallet: 'Metamask',
         connectedNetwork: 'Goerli'
-      }
+      },
+      isUnlocked: null
     }
   },
   computed: {
@@ -133,6 +134,8 @@ export default {
         } else {
           console.log('We have the ethereum object', ethereum)
         }
+        await ethereum.on('accountsChanged', this.handleAccountsChanged)
+        await ethereum.on('disconnect', this.handleDisconnect)
         const accounts = await ethereum.request({ method: 'eth_accounts' })
         if (accounts.length !== 0) {
           const account = accounts[0]
@@ -147,6 +150,15 @@ export default {
         console.log(error)
         return false
       }
+    },
+    handleAccountsChanged(accounts) {
+      // Update the current account when it is changed
+      this.currentAccount = accounts[0]
+    },
+    handleDisconnect(error) {
+      // Handle the 'disconnect' event when the user's account is locked
+      console.error(error)
+      this.currentAccount = null
     },
     connectWallet: async function() {
       try {
