@@ -7,10 +7,13 @@ const state = {
   },
   device: 'desktop',
   size: Cookies.get('size') || 'medium',
-  showSidebar: Cookies.get('sidebarVisible') ? !!+Cookies.get('sidebarStatus') : false
+  displaySidebar: false
 }
 
 const mutations = {
+  DISPLAY_SIDEBAR: (state, displaySidebar) => {
+    state.displaySidebar = displaySidebar
+  },
   SHOW_SIDEBAR: state => {
     state.showSidebar = true
     if (state.showSidebar) {
@@ -43,6 +46,9 @@ const mutations = {
 }
 
 const actions = {
+  displaySidebar({ commit }, displaySidebar) {
+    commit('DISPLAY_SIDEBAR', displaySidebar)
+  },
   showSidebar({ commit }) {
     commit('SHOW_SIDEBAR')
   },

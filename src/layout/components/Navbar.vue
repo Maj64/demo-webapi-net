@@ -1,18 +1,18 @@
 <template>
   <div class="navbar">
-    <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
-
+    <div v-if="displaySidebar">
+      <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
+    </div>
     <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
-
     <div class="right-menu">
-      <div v-if="!currentAccount" class="right-menu-item btn-container">
+      <div v-if="!account" class="right-menu-item btn-container">
         <button class="btn-connect" @click="connectWallet">Connect Wallet</button>
       </div>
       <div v-else>
         <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
           <div class="avatar-wrapper">
             <img :src="avatar + '?imageView2/1/w/80/h/80'" class="user-avatar">
-            <div class="user-name">gor: {{ currentAccount }}</div>
+            <div class="user-name">gor: {{ account }}</div>
           </div>
           <el-dropdown-menu slot="dropdown" class="dropdown-menu">
             <el-dropdown-item @click.native="handleShowProfile">Profile</el-dropdown-item>
@@ -118,63 +118,17 @@ export default {
     ...mapGetters([
       'sidebar',
       'avatar',
-      'device'
+      'device',
+      'account',
+      'displaySidebar'
     ])
   },
   mounted() {
-    this.checkConnectedWalletExist()
+    this.$store.dispatch('user/getConnectionInfo')
   },
   methods: {
-    checkConnectedWalletExist: async function() {
-      try {
-        const { ethereum } = window
-        if (!ethereum) {
-          alert('Make sure you have metamask!')
-          return false
-        } else {
-          console.log('We have the ethereum object', ethereum)
-        }
-        await ethereum.on('accountsChanged', this.handleAccountsChanged)
-        await ethereum.on('disconnect', this.handleDisconnect)
-        const accounts = await ethereum.request({ method: 'eth_accounts' })
-        if (accounts.length !== 0) {
-          const account = accounts[0]
-          console.log('Found an authorized account:', account)
-          this.currentAccount = account
-          return true
-        } else {
-          console.log('No authorized account found')
-          return false
-        }
-      } catch (error) {
-        console.log(error)
-        return false
-      }
-    },
-    handleAccountsChanged(accounts) {
-      // Update the current account when it is changed
-      this.currentAccount = accounts[0]
-    },
-    handleDisconnect(error) {
-      // Handle the 'disconnect' event when the user's account is locked
-      console.error(error)
-      this.currentAccount = null
-    },
-    connectWallet: async function() {
-      try {
-        const { ethereum } = window
-        if (!ethereum) {
-          alert('Get MetaMask!')
-          return
-        }
-        const accounts = await ethereum.request({
-          method: 'eth_requestAccounts'
-        })
-        console.log('Connected', accounts[0])
-        this.currentAccount = accounts[0]
-      } catch (error) {
-        console.log(error)
-      }
+    async connectWallet() {
+      await this.$store.dispatch('user/connectWallet')
     },
     shortenString(str) {
       if (str.length <= 28) {
@@ -192,16 +146,6 @@ export default {
     handleClose() {
       this.dialogData = { ...this.dialogData, dialogVisible: false }
       this.profile = { ...this.profile, address: this.shortenString(this.currentAccount) }
-    },
-    attachContract: async function() {
-      /* const provider = new this.$ethers.providers.JsonRpcProvider('http://127.0.0.1:7545')
-      const signer = provider.getSigner()*/
-      // const network = await provider.getNetwork();
-      // console.log(network);
-      /* const abi = Greeter.abi
-      // The Contract object
-      this.currentContract = new this.$ethers.Contract(this.contractAddress, abi, signer)
-      console.log(await this.currentContract.symbol()) */
     },
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')

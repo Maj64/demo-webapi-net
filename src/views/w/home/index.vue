@@ -21,7 +21,7 @@
             <div class="number">0</div>
           </div>
           <div class="info-btn">
-            <button class="btn">Token</button>
+            <button class="btn" @click="handleLink">Token</button>
           </div>
         </div>
       </div>
@@ -35,7 +35,12 @@
 <script>
 
 export default {
-  name: 'Home'
+  name: 'Home',
+  methods: {
+    handleLink() {
+      this.$router.push('/token/list')
+    }
+  }
 }
 </script>
 
@@ -60,6 +65,7 @@ export default {
     .app-content {
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
       gap: 8px;
       background-color: #1c1c1c;
       color: rgb(255, 255, 255);

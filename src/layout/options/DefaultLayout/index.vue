@@ -1,8 +1,8 @@
 <template>
   <div :class="classObj" class="app-wrapper">
     <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
-    <div v-if="displaySidebar"><sidebar class="sidebar-container" /></div>
-    <div :class="[{hasTagsView:needTagsView}, displaySidebar ? 'main-container' : 'main-container-no-margin']">
+    <sidebar class="sidebar-container" />
+    <div :class="{hasTagsView:needTagsView}" class="main-container">
       <div :class="{'fixed-header':fixedHeader}">
         <navbar />
         <tags-view v-if="needTagsView" />
@@ -32,16 +32,11 @@ export default {
     TagsView
   },
   mixins: [ResizeMixin],
-  data() {
-    return {
-      noMargin: ''
-    }
-  },
   computed: {
     ...mapState({
       sidebar: state => state.app.sidebar,
       device: state => state.app.device,
-      displaySidebar: state => state.app.displaySidebar,
+      showSidebar: state => state.app.showSidebar,
       showSettings: state => state.settings.showSettings,
       needTagsView: state => state.settings.tagsView,
       fixedHeader: state => state.settings.fixedHeader
@@ -111,10 +106,6 @@ export default {
 
   .hideSidebar .fixed-header {
     width: calc(100% - 54px)
-  }
-
-  .main-container-no-margin .fixed-header {
-    width: 100%;
   }
 
   .mobile .fixed-header {

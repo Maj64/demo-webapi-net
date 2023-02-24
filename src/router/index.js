@@ -73,13 +73,14 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/home',
+    hidden: true,
+    redirect: '/wallet',
     children: [
       {
-        path: 'home',
-        component: () => import('@/views/w/home'),
-        name: 'Home',
-        meta: { title: 'Home', icon: 'el-icon-s-home', affix: true }
+        path: 'wallet',
+        component: () => import('@/views/w/wallet'),
+        name: 'Wallet',
+        meta: { title: 'Wallet', icon: 'el-icon-wallet', affix: true }
       }
     ]
   },
@@ -195,27 +196,24 @@ export const asyncRoutes = [
   tableRouter,
 
   {
-    path: '/wallet',
+    path: '/:id',
     component: Layout,
     children: [
       {
-        path: 'list',
-        component: () => import('@/views/w/wallet/index'),
-        name: 'Wallet',
-        meta: {
-          title: 'Wallet',
-          icon: 'el-icon-wallet'
-        }
+        path: 'home',
+        component: () => import('@/views/w/home'),
+        name: 'Home',
+        meta: { title: 'Home', icon: 'el-icon-s-home', affix: true }
       }
     ]
   },
   {
-    path: '/token',
+    path: '/:id',
     component: Layout,
     children: [
       {
-        path: 'list',
-        component: () => import('@/views/w/token/index'),
+        path: 'token',
+        component: () => import('@/views/w/token'),
         name: 'Token',
         meta: {
           title: 'Token',
@@ -225,12 +223,12 @@ export const asyncRoutes = [
     ]
   },
   {
-    path: '/owner',
+    path: '/:id',
     component: Layout,
     children: [
       {
-        path: 'list',
-        component: () => import('@/views/w/owner/index'),
+        path: 'owner',
+        component: () => import('@/views/w/owner'),
         name: 'Wallet',
         meta: {
           title: 'Owner',
@@ -240,12 +238,12 @@ export const asyncRoutes = [
     ]
   },
   {
-    path: '/transaction',
+    path: '/:id',
     component: Layout,
     children: [
       {
-        path: 'list',
-        component: () => import('@/views/w/transaction/index'),
+        path: 'transaction',
+        component: () => import('@/views/w/transaction'),
         name: 'Transaction',
         meta: {
           title: 'Transaction',

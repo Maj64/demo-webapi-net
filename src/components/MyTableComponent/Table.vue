@@ -9,10 +9,13 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(dataRow, dataIndex) in dataSource" :key="dataIndex" @click="$emit('rowClick', {...dataRow, RowIndex: dataIndex})">
+        <tr v-for="(dataRow, dataIndex) in dataSource" :key="dataIndex" @click="handleRowClick({...dataRow, RowIndex: dataIndex})">
           <td v-for="(column, columnIndex) in columns" :key="columnIndex">
             <div v-if="column.template">
-              <slot :rowData="{...dataRow, ColumnIndex: columnIndex, RowIndex: dataIndex} " :name="column.template" />
+              <slot :rowData="{...dataRow, prop: column, ColumnIndex: columnIndex, RowIndex: dataIndex} " :name="column.template" />
+            </div>
+            <div v-else-if="column.input">
+              <el-input v-model="dataRow[column.field]" type="text" />
             </div>
             <div v-else>
               <div v-if="column.unShorten">
@@ -42,13 +45,18 @@ export default {
     }
   },
   methods: {
+    handleRowClick(rowData) {
+      this.$emit('row-click', rowData)
+    },
     shortenString(str) {
-      if (str.length <= 16) {
-        return str
-      } else {
-        const firstThree = str.slice(0, 12)
-        const lastThree = str.slice(-3)
-        return `${firstThree}...${lastThree}`
+      if (typeof str === 'string') {
+        if (str.length <= 16) {
+          return str
+        } else {
+          const firstThree = str.slice(0, 12)
+          const lastThree = str.slice(-3)
+          return `${firstThree}...${lastThree}`
+        }
       }
     }
   }

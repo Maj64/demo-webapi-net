@@ -9,6 +9,7 @@
     <Table
       :columns="columns"
       :data-source="wallets"
+      @row-click="handleRowClick"
     >
       <template v-slot:required="{rowData}">
         <div class="action-item">
@@ -17,8 +18,8 @@
       </template>
       <template v-slot:action="{rowData}">
         <div class="action">
-          <div class="action-item"><button class="btn-size deposit-btn btn-normal" @click="deposit(rowData)">Deposit</button></div>
-          <div class="action-item"><button class="btn withdraw-btn" @click="duplicate(rowData)">Withdraw</button></div>
+          <div class="action-item"><button class="btn-size deposit-btn btn-normal" @click="handleDeposit(rowData)">Deposit</button></div>
+          <div class="action-item"><button class="btn withdraw-btn" @click="handleWithdraw(rowData)">Withdraw</button></div>
         </div>
       </template>
     </Table>
@@ -26,20 +27,22 @@
       <template v-slot:owners>
         <div class="owner-header">
           <h3>Owners</h3>
-          <div class="action-item"><button class="btn">Add</button></div>
+          <div class="action-item"><button class="btn" @click="handleAddOwner">Add</button></div>
         </div>
         <Table :columns="columnOwner" :data-source="wallet.owners">
-          <template v-slot:input>
-            <el-input v-modal="owner.name" type="text" />
-          </template>
-          <template v-slot:action>
-            <div class="action-item"><button class="btn btn-danger">Remove</button></div>
+          <template v-slot:action="{rowData}">
+            <div class="action-item"><button class="btn btn-danger" @click="handleRemoveOwner(rowData)">Remove</button></div>
           </template>
         </Table>
       </template>
       <template v-slot:footerDialog>
         <el-button type="info" class="btn-normal btn-cancel" plain @click="handleCancel">Cancel</el-button>
-        <el-button type="success" class="btn" @click="handleAddSubmit">Add</el-button>
+        <div v-if="dialogData.action">
+          <el-button type="success" class="btn" @click="handleSubmit">Send Transaction</el-button>
+        </div>
+        <div v-else>
+          <el-button type="success" class="btn" @click="handleSubmit">Submit</el-button>
+        </div>
       </template>
     </Form>
   </div>
@@ -61,7 +64,8 @@ export default {
         title: '',
         dialogVisible: false,
         template: 'footerDialog',
-        type: null
+        type: null,
+        action: null
       },
       dataForm: {},
       formData: [],
@@ -80,12 +84,13 @@ export default {
         { name: 'Action', template: 'action' }
       ],
       columnOwner: [
-        { name: 'Name', field: 'name', template: 'input' },
-        { name: 'Address', field: 'address', template: 'input' },
+        { name: 'Name', field: 'name', input: 'input' },
+        { name: 'Address', field: 'address', input: 'input' },
         { name: 'Action', template: 'action' }
       ],
       wallets: [
         {
+          id: '1',
           name: 'Hust Wallet',
           address: 'f8ef8939fccccccdfr483yfe89fhdfhdfhdofhdosfhoidhfodshf3dchdi',
           balance: '0.1000000',
@@ -101,14 +106,15 @@ export default {
           name: '',
           address: ''
         }]
-      },
-      owner: {
-        name: '',
-        address: ''
       }
     }
   },
   methods: {
+    handleRowClick(rowData) {
+      console.log(rowData)
+      this.$router.push(`/${rowData?.id}/home`)
+      this.$store.dispatch('app/displaySidebar', true)
+    },
     resetData() {
       this.dialogData = {
         title: '',
@@ -126,18 +132,33 @@ export default {
         template: 'footerDialog',
         type: 'add'
       }
-      this.dataForm = { ...this.wallet }
-      this.formData = { ...this.formList }
+      this.dataForm = {
+        ...this.wallet,
+        owners: [{
+          name: '',
+          address: ''
+        }] }
+      this.formData = [...this.formList]
     },
     handleCancel() {
       this.resetData()
     },
-    handleAddSubmit() {
-      this.wallets.push(this.dataForm)
+    handleSubmit() {
+      switch (this.dialogData.type) {
+        case 'edit': {
+          this.wallets = this.wallets.map(wallet => wallet.id !== this.dataForm.id ? wallet : this.dataForm)
+          break
+        }
+        case 'add':
+          this.wallets.push(this.dataForm)
+          break
+
+        default:
+          break
+      }
       this.resetData()
     },
     handleEdit(rowData) {
-      console.log(rowData)
       this.dialogData = {
         ...this.dialogData,
         title: 'Edit Number Required Confirmations',
@@ -146,6 +167,7 @@ export default {
         type: 'edit'
       }
       this.dataForm = {
+        ...rowData,
         numConfirmationsRequired: rowData.numConfirmationsRequired
       }
       this.formData = [{
@@ -154,10 +176,54 @@ export default {
         field: 'numConfirmationsRequired'
       }]
     },
-    deposit(columnData) {
-      console.log(columnData)
+    handleDeposit() {
+      this.dialogData = {
+        ...this.dialogData,
+        title: 'Deposit',
+        dialogVisible: true,
+        template: 'footerDialog',
+        type: 'deposit',
+        action: 'deposit'
+      }
+      this.formData = [
+        {
+          type: 'number',
+          label: 'Amount(ETH)',
+          field: 'balance'
+        }
+      ]
     },
-    duplicate(columnData) {
+    handleWithdraw() {
+      this.dialogData = {
+        ...this.dialogData,
+        title: 'Withdraw',
+        dialogVisible: true,
+        template: 'footerDialog',
+        type: 'withdraw',
+        action: 'withdraw'
+      }
+      this.formData = [
+        {
+          type: 'number',
+          label: 'Amount(ETH)',
+          field: 'balance'
+        },
+        {
+          type: 'text',
+          label: 'Address',
+          field: 'address'
+        }
+      ]
+    },
+    handleAddOwner() {
+      this.wallet.owners.push({
+        id: '',
+        name: '',
+        address: ''
+      })
+    },
+    handleRemoveOwner(rowData) {
+      this.wallet.owners.splice(rowData.RowIndex, 1)
     }
   }
 }

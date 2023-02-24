@@ -7,6 +7,7 @@ const state = {
   name: '',
   avatar: '',
   introduction: '',
+  account: '',
   roles: []
 }
 
@@ -16,6 +17,9 @@ const mutations = {
   },
   SET_INTRODUCTION: (state, introduction) => {
     state.introduction = introduction
+  },
+  SET_ACCOUNT: (state, account) => {
+    state.account = account
   },
   SET_NAME: (state, name) => {
     state.name = name
@@ -70,6 +74,55 @@ const actions = {
         reject(error)
       })
     })
+  },
+
+  // get connection info
+  async getConnectionInfo({ commit }) {
+    try {
+      const { ethereum } = window
+      if (!ethereum) {
+        alert('Make sure you have metamask!')
+        return false
+      } else {
+        console.log('We have the ethereum object', ethereum)
+      }
+      await ethereum.on('accountsChanged', function handleAccountsChanged(accounts) {
+        // Update the current account when it is changed
+        commit('SET_ACCOUNT', accounts[0])
+      })
+      await ethereum.on('disconnect', function handleDisconnect(error) {
+        // Handle the 'disconnect' event when the user's account is locked
+        console.error(error)
+        commit('SET_ACCOUNT', null)
+      })
+      const accounts = await ethereum.request({ method: 'eth_accounts' })
+      if (accounts.length !== 0) {
+        commit('SET_ACCOUNT', accounts[0])
+        return true
+      } else {
+        console.log('No authorized account found')
+        return false
+      }
+    } catch (error) {
+      console.log(error)
+      return false
+    }
+  },
+
+  async connectWallet({ commit }) {
+    try {
+      const { ethereum } = window
+      if (!ethereum) {
+        alert('Get MetaMask!')
+        return
+      }
+      const accounts = await ethereum.request({
+        method: 'eth_requestAccounts'
+      })
+      commit('SET_ACCOUNT', accounts[0])
+    } catch (error) {
+      console.log(error)
+    }
   },
 
   // user logout

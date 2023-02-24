@@ -11,7 +11,7 @@
               <el-input v-model.number="dataForm[formItem.field]" :type="formItem.type" />
             </div>
           </el-form-item>
-          <slot :dataOwner="{...dataRow} " :name="formItem.template" />
+          <slot :dataOwner="{...dataForm} " :name="formItem.template" />
         </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
