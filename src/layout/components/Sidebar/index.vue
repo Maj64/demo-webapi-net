@@ -12,7 +12,7 @@
         :collapse-transition="false"
         mode="vertical"
       >
-        <sidebar-item v-for="route in permission_routes" :key="route.path" :item="route" :base-path="route.path" />
+        <sidebar-item v-for="route in permission_routes.map(item => ({...item, path: item.path.replace(':id', walletID)}))" :key="route.path" :item="route" :base-path="route.path" />
       </el-menu>
     </el-scrollbar>
   </div>
@@ -29,11 +29,11 @@ export default {
   computed: {
     ...mapGetters([
       'permission_routes',
-      'sidebar'
+      'sidebar',
+      'walletID'
     ]),
     activeMenu() {
       const route = this.$route
-      console.log(route)
       const { meta, path } = route
       // if set path, the sidebar will highlight the path you set
       if (meta.activeMenu) {

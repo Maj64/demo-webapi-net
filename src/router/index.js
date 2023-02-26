@@ -196,11 +196,11 @@ export const asyncRoutes = [
   tableRouter,
 
   {
-    path: '/:id',
+    path: '/:id/home',
     component: Layout,
     children: [
       {
-        path: 'home',
+        path: '',
         component: () => import('@/views/w/home'),
         name: 'Home',
         meta: { title: 'Home', icon: 'el-icon-s-home', affix: true }
@@ -208,11 +208,11 @@ export const asyncRoutes = [
     ]
   },
   {
-    path: '/:id',
+    path: '/:id/token',
     component: Layout,
     children: [
       {
-        path: 'token',
+        path: '',
         component: () => import('@/views/w/token'),
         name: 'Token',
         meta: {
@@ -223,11 +223,11 @@ export const asyncRoutes = [
     ]
   },
   {
-    path: '/:id',
+    path: '/:id/owner',
     component: Layout,
     children: [
       {
-        path: 'owner',
+        path: '',
         component: () => import('@/views/w/owner'),
         name: 'Wallet',
         meta: {
@@ -238,11 +238,11 @@ export const asyncRoutes = [
     ]
   },
   {
-    path: '/:id',
+    path: '/:id/transaction',
     component: Layout,
     children: [
       {
-        path: 'transaction',
+        path: '',
         component: () => import('@/views/w/transaction'),
         name: 'Transaction',
         meta: {

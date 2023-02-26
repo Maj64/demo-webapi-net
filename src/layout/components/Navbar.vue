@@ -18,12 +18,12 @@
             <el-dropdown-item @click.native="handleShowProfile">Profile</el-dropdown-item>
             <!-- <router-link to="/profile/index">
             </router-link> -->
-            <router-link to="/wallet/list">
+            <router-link to="/wallet">
               <el-dropdown-item divided>Wallets</el-dropdown-item>
             </router-link>
-            <el-dropdown-item divided @click.native="logout">
+            <!-- <el-dropdown-item divided @click.native="logout">
               <span style="display:block;">Log Out</span>
-            </el-dropdown-item>
+            </el-dropdown-item> -->
           </el-dropdown-menu>
         </el-dropdown>
         <template v-if="device !== 'mobile'">
@@ -96,9 +96,6 @@ export default {
   },
   data() {
     return {
-      currentAccount: null,
-      currentContract: null,
-      contractAddress: '<Your deployed contract Address>',
       dialogData: {
         title: 'Profile',
         dialogVisible: false,
@@ -107,11 +104,10 @@ export default {
       },
       profile: {
         name: 'Human',
-        address: '',
+        address: this.shortenString(this.$store.getters.account),
         wallet: 'Metamask',
         connectedNetwork: 'Goerli'
-      },
-      isUnlocked: null
+      }
     }
   },
   computed: {
@@ -141,11 +137,9 @@ export default {
     },
     handleShowProfile() {
       this.dialogData = { ...this.dialogData, dialogVisible: true }
-      this.profile = { ...this.profile, address: this.shortenString(this.currentAccount) }
     },
     handleClose() {
       this.dialogData = { ...this.dialogData, dialogVisible: false }
-      this.profile = { ...this.profile, address: this.shortenString(this.currentAccount) }
     },
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
@@ -286,6 +280,9 @@ export default {
       }
     }
 
+  }
+  .modal {
+    z-index: 9999;
   }
   .profile-container {
     display: flex;

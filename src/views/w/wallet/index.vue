@@ -14,12 +14,12 @@
       <template v-slot:required="{rowData}">
         <div class="action-item">
           <div class="row-text">{{ rowData.numConfirmationsRequired }}</div>
-          <button class="btn btn-edit" @click="handleEdit(rowData)">Edit</button></div>
+          <button class="btn btn-edit" @click.stop="handleEdit(rowData)">Edit</button></div>
       </template>
       <template v-slot:action="{rowData}">
         <div class="action">
-          <div class="action-item"><button class="btn-size deposit-btn btn-normal" @click="handleDeposit(rowData)">Deposit</button></div>
-          <div class="action-item"><button class="btn withdraw-btn" @click="handleWithdraw(rowData)">Withdraw</button></div>
+          <div class="action-item"><button class="btn-size deposit-btn btn-normal" @click.stop="handleDeposit(rowData)">Deposit</button></div>
+          <div class="action-item"><button class="btn withdraw-btn" @click.stop="handleWithdraw(rowData)">Withdraw</button></div>
         </div>
       </template>
     </Table>
@@ -90,7 +90,7 @@ export default {
       ],
       wallets: [
         {
-          id: '1',
+          id: 'f8ef8939fccccccdfr483',
           name: 'Hust Wallet',
           address: 'f8ef8939fccccccdfr483yfe89fhdfhdfhdofhdosfhoidhfodshf3dchdi',
           balance: '0.1000000',
@@ -109,11 +109,14 @@ export default {
       }
     }
   },
+  mounted() {
+    this.$store.dispatch('app/displaySidebar', false)
+  },
   methods: {
     handleRowClick(rowData) {
-      console.log(rowData)
       this.$router.push(`/${rowData?.id}/home`)
       this.$store.dispatch('app/displaySidebar', true)
+      this.$store.dispatch('app/setWalletID', rowData?.id)
     },
     resetData() {
       this.dialogData = {

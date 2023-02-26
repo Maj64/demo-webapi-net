@@ -5,7 +5,7 @@
       <div class="app-content">
         <div class="avatar-wrapper">
           <div class="avatar-item avatar-image">
-            <img :src="avatar + '?imageView2/1/w/80/h/80'" class="user-avatar">
+            <img src="" class="user-avatar">
           </div>
           <div class="avatar-item">
             <span class="avatar-item-right">Goerli</span>
@@ -33,12 +33,16 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Home',
+  computed: {
+    ...mapGetters(['walletID'])
+  },
   methods: {
     handleLink() {
-      this.$router.push('/token/list')
+      this.$router.push(`/${this.walletID}/token`)
     }
   }
 }

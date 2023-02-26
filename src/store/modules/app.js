@@ -7,7 +7,8 @@ const state = {
   },
   device: 'desktop',
   size: Cookies.get('size') || 'medium',
-  displaySidebar: false
+  displaySidebar: false,
+  walletID: null
 }
 
 const mutations = {
@@ -42,7 +43,11 @@ const mutations = {
   SET_SIZE: (state, size) => {
     state.size = size
     Cookies.set('size', size)
+  },
+  SET_WALLET_ID: (state, walletID) => {
+    state.walletID = walletID
   }
+
 }
 
 const actions = {
@@ -63,6 +68,9 @@ const actions = {
   },
   setSize({ commit }, size) {
     commit('SET_SIZE', size)
+  },
+  setWalletID({ commit }, walletID) {
+    commit('SET_WALLET_ID', walletID)
   }
 }
 

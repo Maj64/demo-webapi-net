@@ -84,7 +84,7 @@ const actions = {
         alert('Make sure you have metamask!')
         return false
       } else {
-        console.log('We have the ethereum object', ethereum)
+        console.log('We have the ethereum object')
       }
       await ethereum.on('accountsChanged', function handleAccountsChanged(accounts) {
         // Update the current account when it is changed
