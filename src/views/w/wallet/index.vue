@@ -91,10 +91,31 @@ export default {
       wallets: [
         {
           id: 'f8ef8939fccccccdfr483',
-          name: 'Hust Wallet',
+          name: 'Hust Wallet 1',
           address: 'f8ef8939fccccccdfr483yfe89fhdfhdfhdofhdosfhoidhfodshf3dchdi',
           balance: '0.1000000',
           numConfirmationsRequired: '2'
+        },
+        {
+          id: 'f8ef8939fccccccdfr481',
+          name: 'Hust Wallet 2',
+          address: 'f8ef8939fccccccdfr483yfe89fhdfhdfhdofhdosfhoidhfodshf3dchdi',
+          balance: '0.1000000',
+          numConfirmationsRequired: '1'
+        },
+        {
+          id: 'f8ef8939fccccccdfr484',
+          name: 'Hust Wallet 3',
+          address: 'f8ef8939fccccccdfr483yfe89fhdfhdfhdofhdosfhoidhfodshf3dchdi',
+          balance: '0.1000000',
+          numConfirmationsRequired: '1'
+        },
+        {
+          id: 'f8ef8939fccccccdfr484',
+          name: 'Hust Wallet 3',
+          address: 'f8ef8939fccccccdfr483yfe89fhdfhdfhdofhdosfhoidhfodshf3dchdi',
+          balance: '0.1000000',
+          numConfirmationsRequired: '1'
         }
       ],
       wallet: {

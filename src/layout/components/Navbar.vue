@@ -5,9 +5,7 @@
         <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
       </div>
       <div v-else>
-        <router-link class="sidebar-logo-link" to="/">
-          <img v-if="logo" :src="logo" class="sidebar-logo">
-        </router-link>
+        <svg-icon class="navbar-logo" class-name="logo-icon" icon-class="logoTee" />
       </div>
       <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
     </div>
@@ -149,16 +147,20 @@ export default {
 
           const ethers = this.$ethers
           const email = 'tao.duongkhac@gmail.com'
-          const provider = new ethers.providers.JsonRpcProvider('https://goerli.infura.io/v3/310c4684f9a44cb382ba0a0fd7c14f10')
-          const contract = new ethers.Contract(NOTIFICATION_CONTRACT_ADDR, NOTIFICATION_CONTRACT, provider)
-          const result = await contract.get(email)
+          // const provider = new ethers.providers.JsonRpcProvider('https://goerli.infura.io/v3/310c4684f9a44cb382ba0a0fd7c14f10')
+          // const contract = new ethers.Contract(NOTIFICATION_CONTRACT_ADDR, NOTIFICATION_CONTRACT, provider)
+          // const result = await contract.get(email)
           console.log('>>>', result)
-          return
 
-          // this.provider = new this.$ethers.providers.Web3Provider(window.ethereum)
-          // this.signer = this.provider.getSigner()
-          // this.connectedAddress = await this.signer.getAddress()
-          // console.log(`Connected to Metamask with address ${this.connectedAddress}`)
+          this.provider = new ethers.providers.Web3Provider(window.ethereum)
+          this.signer = this.provider.getSigner()
+          console.log(await this.signer)
+          this.connectedAddress = await this.signer.getAddress()
+
+          const contract = new ethers.Contract(NOTIFICATION_CONTRACT_ADDR, NOTIFICATION_CONTRACT, this.signer)
+          const result = await contract.register(email, 'deviceType', 'deviceToken')
+
+          console.log(`Connected to Metamask with address ${this.connectedAddress}`)
         } catch (error) {
           console.error(error)
         }
@@ -202,6 +204,12 @@ export default {
 <style lang="scss" scoped>
 @import "../../styles/variables.scss";
 
+.navbar-logo {
+  float: left;
+  width: 50px !important;
+  height: 50px !important;
+  margin-right: 16px;
+}
 .navbar {
   height: 50px;
   overflow: hidden;
@@ -209,7 +217,7 @@ export default {
   background-color: $--color-background-paper;
   border-bottom: 2px solid $--color-border-light;
 
-  .sidebar-logo-link {
+  /* .sidebar-logo-link {
     float: left;
     margin-top: 8px;
     margin-left: 10px;
@@ -220,7 +228,7 @@ export default {
     height: 32px;
     vertical-align: middle;
     margin-right: 12px;
-  }
+  } */
 
   /* box-shadow: 0 1px 4px rgba(48, 48, 51, .08); */
   .dropdown-menu {

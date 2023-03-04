@@ -117,6 +117,9 @@ $--space-3: 24px;
           text-align: left;
         }
       }
+      tr:nth-child(odd) {
+        background-color: rgba(102, 102, 102, 0.2);
+      }
     }
   }
   .action {
