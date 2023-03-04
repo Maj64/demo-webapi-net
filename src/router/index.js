@@ -229,7 +229,7 @@ export const asyncRoutes = [
       {
         path: '',
         component: () => import('@/views/w/owner'),
-        name: 'Wallet',
+        name: 'Owner',
         meta: {
           title: 'Owner',
           icon: 'el-icon-s-custom'

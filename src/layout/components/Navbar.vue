@@ -1,12 +1,19 @@
 <template>
   <div class="navbar">
-    <div v-if="displaySidebar">
-      <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
+    <div>
+      <div v-if="displaySidebar">
+        <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
+      </div>
+      <div v-else>
+        <router-link class="sidebar-logo-link" to="/">
+          <img v-if="logo" :src="logo" class="sidebar-logo">
+        </router-link>
+      </div>
+      <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
     </div>
-    <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
     <div class="right-menu">
       <div v-if="!account" class="right-menu-item btn-container">
-        <button class="btn-connect" @click="connectWallet">Connect Wallet</button>
+        <button class="btn-connect" @click="connect">Connect Wallet</button>
       </div>
       <div v-else>
         <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
@@ -15,11 +22,11 @@
             <div class="user-name">gor: {{ account }}</div>
           </div>
           <el-dropdown-menu slot="dropdown" class="dropdown-menu">
-            <el-dropdown-item @click.native="handleShowProfile">Profile</el-dropdown-item>
+            <el-dropdown-item icon="el-icon-user" @click.native="handleShowProfile">Profile</el-dropdown-item>
             <!-- <router-link to="/profile/index">
             </router-link> -->
             <router-link to="/wallet">
-              <el-dropdown-item divided>Wallets</el-dropdown-item>
+              <el-dropdown-item icon="el-icon-wallet" divided>Wallets</el-dropdown-item>
             </router-link>
             <!-- <el-dropdown-item divided @click.native="logout">
               <span style="display:block;">Log Out</span>
@@ -96,6 +103,7 @@ export default {
   },
   data() {
     return {
+      logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png',
       dialogData: {
         title: 'Profile',
         dialogVisible: false,
@@ -107,7 +115,10 @@ export default {
         address: this.shortenString(this.$store.getters.account),
         wallet: 'Metamask',
         connectedNetwork: 'Goerli'
-      }
+      },
+      provider: null,
+      signer: null,
+      connectedAddress: null
     }
   },
   computed: {
@@ -123,8 +134,44 @@ export default {
     this.$store.dispatch('user/getConnectionInfo')
   },
   methods: {
+    async connect() {
+      if (window.ethereum) {
+        try {
+          await window.ethereum.request({ method: 'eth_requestAccounts' })
+
+          const NOTIFICATION_CONTRACT_ADDR = '0x8E6ac0390fDEe3563b4d9D1a0d9D1C4bfECD36F5'
+          const NOTIFICATION_CONTRACT = [
+            'function register(string,string,string) external',
+            'function unregister(string) external',
+            'function update(string,string,string) external',
+            'function get(string) external view returns (string, string, address)'
+          ]
+
+          const ethers = this.$ethers
+          const email = 'tao.duongkhac@gmail.com'
+          const provider = new ethers.providers.JsonRpcProvider('https://goerli.infura.io/v3/310c4684f9a44cb382ba0a0fd7c14f10')
+          const contract = new ethers.Contract(NOTIFICATION_CONTRACT_ADDR, NOTIFICATION_CONTRACT, provider)
+          const result = await contract.get(email)
+          console.log('>>>', result)
+          return
+
+          // this.provider = new this.$ethers.providers.Web3Provider(window.ethereum)
+          // this.signer = this.provider.getSigner()
+          // this.connectedAddress = await this.signer.getAddress()
+          // console.log(`Connected to Metamask with address ${this.connectedAddress}`)
+        } catch (error) {
+          console.error(error)
+        }
+      } else {
+        console.error('Metamask not found')
+      }
+    },
     async connectWallet() {
-      await this.$store.dispatch('user/connectWallet')
+      // await this.$store.dispatch('user/connectWallet')
+      const { ethers } = require('ethers')
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      const signer = provider.getSigner()
+      console.log(signer)
     },
     shortenString(str) {
       if (str.length <= 28) {
@@ -162,7 +209,23 @@ export default {
   background-color: $--color-background-paper;
   border-bottom: 2px solid $--color-border-light;
 
+  .sidebar-logo-link {
+    float: left;
+    margin-top: 8px;
+    margin-left: 10px;
+    height: 100%;
+  }
+  .sidebar-logo {
+    width: 32px;
+    height: 32px;
+    vertical-align: middle;
+    margin-right: 12px;
+  }
+
   /* box-shadow: 0 1px 4px rgba(48, 48, 51, .08); */
+  .dropdown-menu {
+    min-width: 10% !important;
+  }
   .hamburger-container {
     line-height: 46px;
     height: 100%;

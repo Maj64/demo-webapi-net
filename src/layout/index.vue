@@ -11,6 +11,21 @@
       <right-panel v-if="showSettings">
         <settings />
       </right-panel>
+      <footer>
+        <div class="copyright">
+          <div class="container">
+            <div class="row">
+              <span>Tee Production</span>
+            </div>
+            <div class="row">
+              <span>Copyright © 2023</span>
+            </div>
+            <div class="row">
+              <span>Contact us</span>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   </div>
 </template>
@@ -138,5 +153,16 @@ export default {
 
   .sidebar-container {
     border-right: 1px solid rgb(48, 48, 51);
+  }
+
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1c1c1c;
+    color: rgba(255, 255, 255, 0.8);
+    border-top: solid 1px #303033;
+    height: 64px;
+    padding: 8px;
   }
 </style>

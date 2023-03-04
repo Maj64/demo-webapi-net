@@ -105,6 +105,15 @@
 
 // dropdown
 .el-dropdown-menu {
+  min-width: 10%;
+  .el-dropdown-menu__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .el-icon-wallet {
+      margin-right: 20px;
+    }
+  }
   a {
     display: block
   }

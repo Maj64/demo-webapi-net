@@ -7,7 +7,7 @@ import 'normalize.css/normalize.css' // a modern alternative to CSS resets
 import Element from 'element-ui'
 import './styles/element-variables.scss'
 import enLang from 'element-ui/lib/locale/lang/en'// 如果使用中文语言包请默认支持，无需额外引入，请删除该依赖
-// import ethers from './plugins/ethers'
+import ethers from './plugins/ethers'
 
 import '@/styles/index.scss' // global css
 
@@ -39,7 +39,7 @@ Vue.use(Element, {
   locale: enLang // 如果使用中文，无需设置，请删除
 })
 
-// Vue.use(ethers)
+Vue.use(ethers)
 
 // register global utility filters
 Object.keys(filters).forEach(key => {

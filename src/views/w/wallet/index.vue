@@ -233,7 +233,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$--color-text: rgb(255, 255, 255);
+$--color-text: black;
 $--color-border-light: #303033;
 $--space-3: 24px;
 .app-container {
@@ -315,7 +315,7 @@ $--space-3: 24px;
   }
 
   .deposit-btn {
-    color: #79797e;
+    color: $--color-text;
   }
 
   .btn-edit {

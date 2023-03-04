@@ -64,11 +64,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$--color-text: rgb(255, 255, 255);
+$--color-text: black;
 $--color-border-light: #303033;
 $--space-3: 24px;
 .table-container {
   margin: 10px 24px;
+  border: 1px solid rgb(71, 71, 75);
+  background: linear-gradient(-90deg,rgba(16, 255, 132, 0.6),rgba(95, 221, 255, 0.6));
+  min-height: 60vh;
+  border-radius: 10px;
   table {
     display: table;
     width: 100%;
@@ -88,8 +92,9 @@ $--space-3: 24px;
           padding: 16px;
           font-size: 16px;
           line-height: 22px;
-          font-weight: 400;
-          color: rgb(161, 163, 167);
+          font-weight: 600;
+          text-transform: uppercase;
+          /* color: rgb(161, 163, 167); */
         }
       }
     }
@@ -108,7 +113,7 @@ $--space-3: 24px;
           display: table-cell;
           border-bottom: 1px solid rgb(81, 81, 81);
           padding: 16px;
-          color: rgb(255, 255, 255);
+          color: $--color-text;
           text-align: left;
         }
       }
