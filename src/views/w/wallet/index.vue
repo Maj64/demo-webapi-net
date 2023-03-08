@@ -45,12 +45,14 @@
         </div>
       </template>
     </Form>
+    <button @click="getWallet">Get Wallet</button>
   </div>
 </template>
 
 <script>
 import Table from '@/components/MyTableComponent/Table.vue'
 import Form from '@/components/MyDialogComponent/Form.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Wallet',
@@ -130,10 +132,19 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters([
+      'provider'
+    ])
+  },
   mounted() {
     this.$store.dispatch('app/displaySidebar', false)
   },
   methods: {
+    getWallet() {
+      console.log(this.provider)
+      // get()
+    },
     handleRowClick(rowData) {
       this.$router.push(`/${rowData?.id}/home`)
       this.$store.dispatch('app/displaySidebar', true)

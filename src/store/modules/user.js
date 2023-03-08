@@ -7,8 +7,10 @@ const state = {
   name: '',
   avatar: '',
   introduction: '',
-  account: '',
-  roles: []
+  roles: [],
+  signer: null,
+  ethers: null,
+  provider: null
 }
 
 const mutations = {
@@ -17,9 +19,6 @@ const mutations = {
   },
   SET_INTRODUCTION: (state, introduction) => {
     state.introduction = introduction
-  },
-  SET_ACCOUNT: (state, account) => {
-    state.account = account
   },
   SET_NAME: (state, name) => {
     state.name = name
@@ -76,39 +75,29 @@ const actions = {
     })
   },
 
-  // get connection info
-  async getConnectionInfo({ commit }) {
-    try {
-      const { ethereum } = window
-      if (!ethereum) {
-        alert('Make sure you have metamask!')
-        return false
-      } else {
-        console.log('We have the ethereum object')
-      }
-      await ethereum.on('accountsChanged', function handleAccountsChanged(accounts) {
-        // Update the current account when it is changed
-        commit('SET_ACCOUNT', accounts[0])
-      })
-      await ethereum.on('disconnect', function handleDisconnect(error) {
-        // Handle the 'disconnect' event when the user's account is locked
+  async getEthers({ commit }) {
+    if (window.ethereum) {
+      try {
+        const account = await window.ethereum.request({ method: 'eth_requestAccounts' })
+        console.log(account)
+
+        if (!state.ethers) {
+          console.log('ethers undefined')
+        } else {
+          const provider = new state.ethers.providers.Web3Provider(window.ethereum)
+          const signer = provider.getSigner()
+          commit('SET_PROVIDER', provider)
+          commit('SET_SIGNER', signer)
+        }
+      } catch (error) {
         console.error(error)
-        commit('SET_ACCOUNT', null)
-      })
-      const accounts = await ethereum.request({ method: 'eth_accounts' })
-      if (accounts.length !== 0) {
-        commit('SET_ACCOUNT', accounts[0])
-        return true
-      } else {
-        console.log('No authorized account found')
-        return false
       }
-    } catch (error) {
-      console.log(error)
-      return false
+    } else {
+      console.error('Metamask not found')
     }
   },
 
+  // get connection info
   async connectWallet({ commit }) {
     try {
       const { ethereum } = window

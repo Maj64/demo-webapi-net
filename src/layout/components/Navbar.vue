@@ -11,13 +11,14 @@
     </div>
     <div class="right-menu">
       <div v-if="!account" class="right-menu-item btn-container">
-        <button class="btn-connect" @click="connect">Connect Wallet</button>
+        <button class="btn-connect" @click="connectWallet">Connect Wallet</button>
       </div>
       <div v-else>
         <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
           <div class="avatar-wrapper">
             <img :src="avatar + '?imageView2/1/w/80/h/80'" class="user-avatar">
             <div class="user-name">gor: {{ account }}</div>
+            <div v-if="balance" :style="{borderLeft: '1px solid white', padding: '6px', color: 'white'}">balance: {{ balance }} </div>
           </div>
           <el-dropdown-menu slot="dropdown" class="dropdown-menu">
             <el-dropdown-item icon="el-icon-user" @click.native="handleShowProfile">Profile</el-dropdown-item>
@@ -46,8 +47,9 @@
           <!-- <el-tooltip content="Global Size" effect="dark" placement="bottom">
                   <size-select id="size-select" class="right-menu-item hover-effect" />
                 </el-tooltip> -->
-
-          <el-tag effect="dark" size="small" class="right-menu-item tag-coin">Goerli</el-tag>
+          <el-tag effect="dark" size="small" class="right-menu-item tag-coin">
+            Goerli
+          </el-tag>
 
         </template>
       </div>
@@ -82,10 +84,11 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import ErrorLog from '@/components/ErrorLog'
+import { unlockAccount } from '@/api/web3'
 // import Screenfull from '@/components/Screenfull'
 // import SizeSelect from '@/components/SizeSelect'
 // import Search from '@/components/HeaderSearch'
@@ -110,13 +113,10 @@ export default {
       },
       profile: {
         name: 'Human',
-        address: this.shortenString(this.$store.getters.account),
+        address: null,
         wallet: 'Metamask',
         connectedNetwork: 'Goerli'
-      },
-      provider: null,
-      signer: null,
-      connectedAddress: null
+      }
     }
   },
   computed: {
@@ -124,62 +124,50 @@ export default {
       'sidebar',
       'avatar',
       'device',
+      'displaySidebar',
       'account',
-      'displaySidebar'
+      'balance',
+      'netId'
     ])
   },
   mounted() {
-    this.$store.dispatch('user/getConnectionInfo')
+    this['web3/getConnectionInfo']()
+    this.reload()
   },
   methods: {
-    async connect() {
-      if (window.ethereum) {
-        try {
-          await window.ethereum.request({ method: 'eth_requestAccounts' })
-
-          const NOTIFICATION_CONTRACT_ADDR = '0x8E6ac0390fDEe3563b4d9D1a0d9D1C4bfECD36F5'
-          const NOTIFICATION_CONTRACT = [
-            'function register(string,string,string) external',
-            'function unregister(string) external',
-            'function update(string,string,string) external',
-            'function get(string) external view returns (string, string, address)'
-          ]
-
-          const ethers = this.$ethers
-          const email = 'tao.duongkhac@gmail.com'
-          // const provider = new ethers.providers.JsonRpcProvider('https://goerli.infura.io/v3/310c4684f9a44cb382ba0a0fd7c14f10')
-          // const contract = new ethers.Contract(NOTIFICATION_CONTRACT_ADDR, NOTIFICATION_CONTRACT, provider)
-          // const result = await contract.get(email)
-          console.log('>>>', result)
-
-          this.provider = new ethers.providers.Web3Provider(window.ethereum)
-          this.signer = this.provider.getSigner()
-          console.log(await this.signer)
-          this.connectedAddress = await this.signer.getAddress()
-
-          const contract = new ethers.Contract(NOTIFICATION_CONTRACT_ADDR, NOTIFICATION_CONTRACT, this.signer)
-          const result = await contract.register(email, 'deviceType', 'deviceToken')
-
-          console.log(`Connected to Metamask with address ${this.connectedAddress}`)
-        } catch (error) {
-          console.error(error)
-        }
-      } else {
-        console.error('Metamask not found')
-      }
+    ...mapActions(['web3/getConnectionInfo']),
+    reload() {
+      this.profile.address = this.account && this.shortenString(this.account)
     },
     async connectWallet() {
-      // await this.$store.dispatch('user/connectWallet')
-      const { ethers } = require('ethers')
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-      const signer = provider.getSigner()
-      console.log(signer)
+      // // await this.$store.dispatch('user/connectWallet')
+      // const { ethers } = require('ethers')
+      // const provider = new ethers.providers.Web3Provider(window.ethereum)
+      // const signer = provider.getSigner()
+      // console.log(signer)
+      try {
+        const web3Data = await unlockAccount()
+        console.log(web3Data)
+        if (web3Data) {
+          const result = localStorage.getItem('wallet')
+          if (result) {
+          // convert to JSON
+            const wallet = JSON.parse(result)
+            console.log(wallet)
+            this.$store.dispatch('wallet/setWallet', wallet)
+          }
+          this.$store.dispatch('web3/updateAccount', web3Data)
+          this.profile.address = web3Data.account
+        }
+      } catch (error) {
+        console.error(error)
+      }
     },
     shortenString(str) {
-      if (str.length <= 28) {
+      if (str && str.length <= 28) {
         return str
       } else {
-        const firstThree = str.slice(0, 20)
+        const firstThree = str.slice(0, 18)
         const lastThree = str.slice(-5)
         return `${firstThree}...${lastThree}`
       }

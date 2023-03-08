@@ -47,7 +47,6 @@ const mutations = {
   SET_WALLET_ID: (state, walletID) => {
     state.walletID = walletID
   }
-
 }
 
 const actions = {
