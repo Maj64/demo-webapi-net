@@ -9,6 +9,7 @@
     <Table
       :columns="columns"
       :data-source="tokens"
+      :class-name="className"
     >
       <template v-slot:required="{rowData}">
         <div class="action-item"><div>{{ rowData.numConfirmationsRequired }}</div><button class="btn btn-edit" @click="deposit(columnData)">Edit</button></div>
@@ -34,6 +35,7 @@ export default {
   },
   data() {
     return {
+      className: 'table-container-height',
       dialogData: {
         title: '',
         dialogVisible: false,

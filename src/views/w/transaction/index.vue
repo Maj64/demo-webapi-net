@@ -6,6 +6,7 @@
     <Table
       :columns="columns"
       :data-source="transactions"
+      :class-name="className"
     >
       <template v-slot:required>
         <div class="action-item"><div>List Owners</div><button class="btn btn-edit" @click="deposit(columnData)">Confirm</button></div>
@@ -29,6 +30,7 @@ export default {
   },
   data() {
     return {
+      className: 'table-container-height',
       dialogData: {
         title: '',
         dialogVisible: false,

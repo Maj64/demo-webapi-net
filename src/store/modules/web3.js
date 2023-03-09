@@ -1,5 +1,6 @@
 // api
 // get token
+import Web3 from 'web3'
 
 const state = {
   account: '',
@@ -31,32 +32,28 @@ const actions = {
   updateNetId({ commit }, netId) {
     commit('UPDATE_NET_ID', netId)
   },
-  async getConnectionInfo({ commit }) {
+  async getConnectionInfo({ commit, state }) {
     try {
       const { ethereum } = window
       if (!ethereum) {
         alert('Make sure you have metamask!')
         return false
-      } else {
-        console.log('We have the ethereum object')
       }
       await ethereum.on('accountsChanged', function handleAccountsChanged(accounts) {
         // Update the current account when it is changed
-        commit('SET_ACCOUNT', accounts[0])
+        const newAccount = accounts[0]
+        commit('UPDATE_ACCOUNT', { ...state, account: newAccount })
       })
       await ethereum.on('disconnect', function handleDisconnect(error) {
         // Handle the 'disconnect' event when the user's account is locked
         console.error(error)
-        commit('SET_ACCOUNT', null)
+        const newAccount = null
+        commit('UPDATE_ACCOUNT', { ...state, account: newAccount })
       })
-      const accounts = await ethereum.request({ method: 'eth_accounts' })
-      if (accounts.length !== 0) {
-        commit('SET_ACCOUNT', accounts[0])
-        return true
-      } else {
-        console.log('No authorized account found')
-        return false
-      }
+      const web3 = new Web3(ethereum)
+      const accounts = await web3.eth.getAccounts()
+      const balance = web3.utils.fromWei(await web3.eth.getBalance(accounts[0]), 'ether')
+      commit('UPDATE_ACCOUNT', { web3, account: accounts[0] || '', balance: Number(balance).toFixed(4) })
     } catch (error) {
       console.log(error)
       return false

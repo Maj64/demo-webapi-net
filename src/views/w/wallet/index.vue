@@ -155,6 +155,8 @@ export default {
         console.log(this.account)
         const walletList = await getWalletList(this.account)
         console.log(walletList)
+
+        this.wallets = walletList
       } catch (error) {
         console.log(error)
       }

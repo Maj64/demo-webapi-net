@@ -8,7 +8,8 @@
     </div>
     <Table
       :columns="columns"
-      :data-source="owners"
+      :data-source="wallet.owners"
+      :class-name="className"
     />
     <Form :dialog-data="dialogData" :data-form="owner" :form-list="formList">
       <template v-slot:footerDialog>
@@ -20,16 +21,24 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import Table from '@/components/MyTableComponent/Table.vue'
 import Form from '@/components/MyDialogComponent/Form.vue'
 export default {
   name: 'Owner',
+  computed: {
+    ...mapGetters([
+      'walletID',
+      'wallet'
+    ])
+  },
   components: {
     Table,
     Form
   },
   data() {
     return {
+      className: 'table-container-height',
       dialogData: {
         title: '',
         dialogVisible: false,
