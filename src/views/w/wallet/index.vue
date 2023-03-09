@@ -103,7 +103,7 @@ export default {
       wallets: [
         {
           name: 'DKT',
-          address: '0x2b68A0e874d502DcBf5035338B2d1196f47Fc664',
+          address: '0xF2e621E72520F4Fd49e01eC78F7AB81C6acDc934',
           balance: '100',
           numConfirmationsRequired: 2
         }
@@ -134,14 +134,15 @@ export default {
   methods: {
     async openWalletDetail(wallet) {
       try {
-        const walletDetail = await get(this.web3, this.account, wallet)
+        console.log(wallet)
+        const walletDetail = await get(new Web3(window.ethereum), this.account, wallet.address)
         console.log(walletDetail)
-        // if (walletDetail) {
-        //   this.$store.dispatch('multiSigWallet/set', walletDetail)
-        //   this.$store.dispatch('app/displaySidebar', true)
-        //   this.$store.dispatch('app/setWalletID', wallet?.address)
-        //   this.$router.push(`/${wallet?.address}/home`)
-        // }
+        if (walletDetail) {
+          this.$store.dispatch('wallet/setWallet', walletDetail)
+          this.$store.dispatch('app/displaySidebar', true)
+          this.$store.dispatch('app/setWalletID', wallet?.address)
+          this.$router.push(`/${wallet?.address}/home`)
+        }
       } catch (error) {
         console.log(error)
       }

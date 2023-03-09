@@ -12,13 +12,13 @@
           </div>
         </div>
         <div class="wallet-content">
-          <div class="wallet-item">wallet-v1</div>
-          <div class="wallet-item wallet-address"><div class="address-label">gor:</div>0xA9BFF0374e99834C9BcA4e7d1f0A003636CE6F87</div>
+          <div class="wallet-item">{{ wallet.name }}</div>
+          <div class="wallet-item wallet-address"><div class="address-label">gor:</div>{{ wallet.address }}</div>
         </div>
         <div class="wallet-info">
           <div class="info-count">
             <div class="title">Tokens</div>
-            <div class="number">0</div>
+            <div class="number">{{ wallet.tokens.length }}</div>
           </div>
           <div class="info-btn">
             <button class="btn" @click="handleLink">Token</button>
@@ -38,7 +38,10 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'Home',
   computed: {
-    ...mapGetters(['walletID'])
+    ...mapGetters([
+      'walletID',
+      'wallet'
+    ])
   },
   methods: {
     handleLink() {

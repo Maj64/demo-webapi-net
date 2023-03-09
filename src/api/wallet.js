@@ -20,6 +20,7 @@ export function getWalletList(account) {
 }
 
 export async function get(web3, account, wallet) {
+  console.log(web3)
   Wallet.setProvider(web3.currentProvider)
   const multiSig = await Wallet.at(wallet)
   const balance = web3.utils.fromWei(await web3.eth.getBalance(multiSig.address), 'ether')
