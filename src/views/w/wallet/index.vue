@@ -232,6 +232,10 @@ export default {
         case 'add':
           this.wallets.push(this.dataForm)
           break
+        case 'deposit': 
+          console.log("handling...")
+         this.deposit()
+         break
 
         default:
           break
@@ -257,6 +261,25 @@ export default {
       }]
     },
     async handleDeposit(wallet) {
+      this.dialogData = {
+        ...this.dialogData,
+        title: 'Deposit',
+        dialogVisible: true,
+        template: 'footerDialog',
+        type: 'deposit',
+        action: 'deposit'
+      }
+      this.formData = [
+        {
+          type: 'number',
+          label: 'Amount(ETH)',
+          field: 'balance'
+        }
+      ]
+      console.log('deposit', wallet)
+      
+    },
+    async deposit() {
       if (!this.web3) {
         this.$message({
           message: 'You must unlock Metamask',
@@ -298,25 +321,31 @@ export default {
       }
 
       // need close form
-      /*
+      
+    },
+    async handleWithdraw(wallet) {
+
       this.dialogData = {
         ...this.dialogData,
-        title: 'Deposit',
+        title: 'Withdraw',
         dialogVisible: true,
         template: 'footerDialog',
-        type: 'deposit',
-        action: 'deposit'
+        type: 'withdraw',
+        action: 'withdraw'
       }
       this.formData = [
         {
           type: 'number',
           label: 'Amount(ETH)',
           field: 'balance'
+        },
+        {
+          type: 'text',
+          label: 'Address',
+          field: 'address'
         }
       ]
-      */
-    },
-    async handleWithdraw(wallet) {
+
       if (!this.web3) {
         this.$message({
           message: 'You must unlock Metamask',
@@ -354,28 +383,7 @@ export default {
         }
       }
 
-      /*
-      this.dialogData = {
-        ...this.dialogData,
-        title: 'Withdraw',
-        dialogVisible: true,
-        template: 'footerDialog',
-        type: 'withdraw',
-        action: 'withdraw'
-      }
-      this.formData = [
-        {
-          type: 'number',
-          label: 'Amount(ETH)',
-          field: 'balance'
-        },
-        {
-          type: 'text',
-          label: 'Address',
-          field: 'address'
-        }
-      ]
-      */
+
     },
     handleAddOwner() {
       this.wallet.owners.push({

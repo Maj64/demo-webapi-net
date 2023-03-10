@@ -15,13 +15,13 @@
         <div class="copyright">
           <div class="container">
             <div class="row">
-              <span>Tee Production</span>
+              <span>Tee platform</span>
             </div>
             <div class="row">
               <span>Copyright © 2023</span>
             </div>
             <div class="row">
-              <span>Contact us</span>
+              <span>Contact us: 0977948802</span>
             </div>
           </div>
         </div>

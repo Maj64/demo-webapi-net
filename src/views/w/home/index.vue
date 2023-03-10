@@ -14,14 +14,25 @@
         <div class="wallet-content">
           <div class="wallet-item">{{ wallet.name }}</div>
           <div class="wallet-item wallet-address"><div class="address-label">gor:</div>{{ wallet.address }}</div>
+          <div class="wallet-item wallet-address">Balance: {{ wallet.balance }} ETH</div>
+        </div>
+        <div class="avatar-item">
+          <div class="info-btn">
+            <button class="btn" @click="handleLink">Token</button>
+          </div>
         </div>
         <div class="wallet-info">
           <div class="info-count">
             <div class="title">Tokens</div>
             <div class="number">{{ wallet.tokens.length }}</div>
           </div>
-          <div class="info-btn">
-            <button class="btn" @click="handleLink">Token</button>
+          <div class="info-count">
+            <div class="title">Transactions</div>
+            <div class="number">{{ wallet.transactionCount }}</div>
+          </div>
+          <div class="info-count">
+            <div class="title">Owners</div>
+            <div class="number">{{ wallet.owners.length }}</div>
           </div>
         </div>
       </div>
@@ -109,7 +120,9 @@ export default {
         gap: 6px;
         margin-bottom: 32px;
         .wallet-item {
-          font-size: 14px;
+          font-size: 40px;
+          font-weight: bold;
+          padding-bottom: 2%;
         }
         .wallet-address {
           font-size: 16px;
@@ -126,6 +139,7 @@ export default {
         align-items: flex-end;
         .info-count {
           flex-basis: 25%;
+          text-align: center;
           .title {
             font-size: 14px;
             line-height: 20px;
