@@ -42,6 +42,17 @@ export async function get(web3, account, wallet) {
   }
 }
 
+export async function getOwner(web3, account, params) {
+  const { wallet, ownerAddress } = params
+  Wallet.setProvider(web3.currentProvider)
+  const multiSig = await Wallet.at(wallet)
+  const owner = await multiSig.getOwner(ownerAddress)
+  return {
+    name: owner.owner,
+    address: owner.ownerName
+  }
+}
+
 export async function deposit(web3, account, params) {
   const { wallet, value } = params
   Wallet.setProvider(web3.currentProvider)
@@ -50,10 +61,10 @@ export async function deposit(web3, account, params) {
 }
 
 export async function createWallet(web3, account, params) {
-  const { name, numConfirmationsRequired, owners } = params
+  const { name, numConfirmationsRequired, owners, ownerNames } = params
   Wallet.setProvider(web3.currentProvider)
 
-  const wallet = await Wallet.new(name, numConfirmationsRequired, owners, {
+  const wallet = await Wallet.new(name, numConfirmationsRequired, owners, ownerNames, {
     from: account
   })
   return await get(web3, account, wallet.address)

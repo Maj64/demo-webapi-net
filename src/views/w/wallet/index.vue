@@ -203,12 +203,14 @@ export default {
       try {
         const { name, numConfirmationsRequired } = this.dataForm
         const ownerAddressList = this.wallet.owners.map((i) => i.address)
-        console.log(ownerAddressList)
+        const ownerNameList = this.wallet.owners.map(i => i.name)
+
         if (this.web3) {
           const wallet = await createWallet(this.web3, this.account, {
             name,
             numConfirmationsRequired,
-            owners: ownerAddressList
+            owners: ownerAddressList,
+            ownerNames: ownerNameList
           })
 
           this.$store.dispatch('wallet/addWallet', {
@@ -273,22 +275,22 @@ export default {
         name: rowData.name
       }
       this.formData = [
-      {
-        type: 'text',
-        label: 'Tên ví',
-        field: 'name'
-      },
-      {
-        type: 'text',
-        label: 'Địa chỉ ví',
-        field: 'wallet'
-      },
-      {
-        type: 'number',
-        label: 'Required Confirmations',
-        field: 'numConfirmationsRequired'
-      }
-    ]
+        {
+          type: 'text',
+          label: 'Tên ví',
+          field: 'name'
+        },
+        {
+          type: 'text',
+          label: 'Địa chỉ ví',
+          field: 'wallet'
+        },
+        {
+          type: 'number',
+          label: 'Required Confirmations',
+          field: 'numConfirmationsRequired'
+        }
+      ]
     },
 
     async handleDeposit(wallet) {
@@ -305,11 +307,11 @@ export default {
         name: wallet.name
       }
       this.formData = [
-      {
-        type: 'text',
-        label: 'Tên ví',
-        field: 'name'
-       },
+        {
+          type: 'text',
+          label: 'Tên ví',
+          field: 'name'
+        },
         {
           type: 'text',
           label: 'Địa chỉ ví',
@@ -376,11 +378,11 @@ export default {
         name: wallet.name
       }
       this.formData = [
-      {
-        type: 'text',
-        label: 'Tên ví',
-        field: 'name'
-      },
+        {
+          type: 'text',
+          label: 'Tên ví',
+          field: 'name'
+        },
         {
           type: 'text',
           label: 'Rút từ ví',
