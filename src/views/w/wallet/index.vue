@@ -27,7 +27,7 @@
     <Form :dialog-data="dialogData" :data-form="dataForm" :form-list="formData">
       <template v-slot:owners>
         <div class="owner-header">
-          <h3>Owners</h3>
+          <h3>Danh sách người sở hữu ví:</h3>
           <div class="action-item"><button class="btn" @click="handleAddOwner">Add</button></div>
         </div>
         <Table :class-name="classNameForm" :columns="columnOwner" :data-source="wallet.owners">
@@ -81,11 +81,9 @@ export default {
       },
       dataForm: {},
       formData: [],
-      formList: [
-        { type: 'text', label: 'Name', field: 'name' },
-        { type: 'text', label: 'Address', field: 'address' },
-        { type: 'number', label: 'Balance', field: 'balance' },
-        { type: 'number', label: 'Required Confirmations', field: 'numConfirmationsRequired' },
+      formList: [ 
+        { type: 'text', label: 'Tên ví', field: 'name' },
+        { type: 'number', label: 'Số người cần xác nhận', field: 'numConfirmationsRequired' },
         { template: 'owners' }
       ],
       columns: [
@@ -104,6 +102,18 @@ export default {
         {
           name: 'DKT',
           address: '0xF2e621E72520F4Fd49e01eC78F7AB81C6acDc934',
+          balance: '100',
+          numConfirmationsRequired: 2
+        },
+        {
+          name: 'DKT',
+          address: '0x5ccca5089b8665cd8c4ff72e79c356b0c318cd0a',
+          balance: '100',
+          numConfirmationsRequired: 2
+        },
+        {
+          name: 'DKT',
+          address: '0x1215c82be553020504d383c1a057eafb1f22d16e',
           balance: '100',
           numConfirmationsRequired: 2
         }
@@ -173,7 +183,7 @@ export default {
     },
     handleAdd() {
       this.dialogData = {
-        title: 'Add',
+        title: 'Tạo mới ví đa chữ ký',
         dialogVisible: true,
         template: 'footerDialog',
         type: 'add'
@@ -183,7 +193,7 @@ export default {
         owners: [{
           name: '',
           address: ''
-        }] }
+      }] }
       this.formData = [...this.formList]
     },
     handleCancel() {
@@ -191,13 +201,16 @@ export default {
     },
     async handleCreateWallet() {
       try {
+        const { name, numConfirmationsRequired } = this.dataForm
         const ownerAddressList = this.wallet.owners.map((i) => i.address)
+        console.log(ownerAddressList)
         if (this.web3) {
           const wallet = await createWallet(this.web3, this.account, {
-            name: this.wallet.name,
-            numConfirmationsRequired: this.wallet.numConfirmationsRequired,
+            name,
+            numConfirmationsRequired,
             owners: ownerAddressList
           })
+
           this.$store.dispatch('wallet/addWallet', {
             name: wallet.name,
             address: wallet.address,
@@ -215,7 +228,10 @@ export default {
           })
         }
       } catch (error) {
-        console.log(error)
+        this.$message({
+            message: error.message,
+            type: 'warning'
+          })
       }
     },
     handleSubmit() {
@@ -225,6 +241,7 @@ export default {
           break
         }
         case 'add': {
+          this.handleCreateWallet()
           this.wallets.push(this.dataForm)
           break
         }
@@ -375,7 +392,6 @@ export default {
       // fake data withDrawValue
       const value = Web3.utils.toBN(amount)
       const zero = Web3.utils.toBN(0)
-
       if (value.gt(zero)) {
         try {
           if (!this.web3) {
@@ -384,7 +400,7 @@ export default {
           await submitTransaction(this.web3, this.account, {
             value,
             destination: creditAddress,
-            data: 'dab',
+            data: '',
             token: '0x0000000000000000000000000000000000000000',
             wallet
           })
@@ -396,6 +412,10 @@ export default {
           // close form, reset value
         } catch (error) {
           console.log(error)
+          this.$message({
+            message: error.message,
+            type: 'warning'
+          })
         }
       }
     },

@@ -28,6 +28,7 @@ export async function get(web3, account, wallet) {
   const tokens = await multiSig.getTokens()
   const numConfirmationsRequired = await multiSig.numConfirmationsRequired()
   const detailTokens = []
+  const transactionCount = await multiSig.getTransactionCount()
   return {
     name,
     address: multiSig.address,
@@ -35,32 +36,36 @@ export async function get(web3, account, wallet) {
     owners,
     tokens,
     numConfirmationsRequired: numConfirmationsRequired.toNumber(),
-    transactionCount: 1,
+    transactionCount,
     transactions: [],
     detailTokens
   }
 }
+
 export async function deposit(web3, account, params) {
   const { wallet, value } = params
   Wallet.setProvider(web3.currentProvider)
   const multiSig = await Wallet.at(wallet)
   await multiSig.sendTransaction({ from: account, value })
 }
+
 export async function createWallet(web3, account, params) {
-  const { name, numConfirmationsRequired, owners } = params
-  Wallet.setProvider(web3.currentProvider)
-  const wallet = await Wallet.new(name, numConfirmationsRequired, owners, {
-    from: account
-  })
-  const walletDetail = await get(web3, account, wallet.address)
-  return walletDetail
+    const { name, numConfirmationsRequired, owners } = params
+    Wallet.setProvider(web3.currentProvider)
+
+    const wallet = await Wallet.new(name, numConfirmationsRequired, owners, {
+        from: account
+    })
+    return await get(web3, account, wallet.address)
 }
+
 export async function importWallet(web3, account, params) {
   const { address } = params
   Wallet.setProvider(web3.currentProvider)
   const wallet = await Wallet.at(address)
   return wallet
 }
+
 export async function addUserToWallet(web3, account, params) {
   Wallet.setProvider(web3.currentProvider)
   debugger
@@ -87,6 +92,7 @@ export async function getTokensApi(web3, account, params) {
     detailTokens
   }
 }
+
 export async function getTransactionsApi(web3, account, params) {
   Wallet.setProvider(web3.currentProvider)
   const wallet = await Wallet.at(params.address)
@@ -115,6 +121,8 @@ export async function getTransactionsApi(web3, account, params) {
     transactions
   }
 }
+
+
 export async function getOwnersApi(web3, account, params) {
   Wallet.setProvider(web3.currentProvider)
   const wallet = await Wallet.at(params.address)
@@ -147,6 +155,7 @@ export async function getOwnersApi(web3, account, params) {
     requests
   }
 }
+
 export async function submitRequestOwner(web3, account, params) {
   const { address, owner, data, addOwner } = params
   Wallet.setProvider(web3.currentProvider)
@@ -155,6 +164,7 @@ export async function submitRequestOwner(web3, account, params) {
     from: account
   })
 }
+
 export async function confirmRequestOwner(web3, account, params) {
   const { address, reqIndex } = params
   Wallet.setProvider(web3.currentProvider)
@@ -163,6 +173,7 @@ export async function confirmRequestOwner(web3, account, params) {
     from: account
   })
 }
+
 export async function executeRequestOwner(web3, account, params) {
   const { address, reqIndex } = params
   Wallet.setProvider(web3.currentProvider)
@@ -171,6 +182,7 @@ export async function executeRequestOwner(web3, account, params) {
     from: account
   })
 }
+
 export async function getWalletAtAddress(web3, account, params) {
   Wallet.setProvider(web3.currentProvider)
   const multiSig = await Wallet.at(params.address)
@@ -178,6 +190,8 @@ export async function getWalletAtAddress(web3, account, params) {
 }
 export async function submitTransaction(web3, account, params) {
   const { destination, value, data, token, wallet } = params
+  console.log('account', account)
+  console.log(params)
   Wallet.setProvider(web3.currentProvider)
   const multiSig = await Wallet.at(wallet)
   await multiSig.submitTransaction(destination, value, new TextEncoder().encode(data), token, {

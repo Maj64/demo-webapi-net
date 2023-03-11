@@ -67,7 +67,7 @@ export default {
   methods: {
     handleAdd() {
       this.dialogData = {
-        title: 'Add',
+        title: 'Thêm mới',
         dialogVisible: true,
         template: 'footerDialog'
       }
