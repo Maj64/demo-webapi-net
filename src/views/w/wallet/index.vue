@@ -3,7 +3,7 @@
     <div class="feature-container">
       <div class="feature-header">Wallet</div>
       <div class="feature-item">
-        <button class="btn btn-add" @click="handleAdd">Add</button>
+        <button class="btn btn-add" @click="handleAdd">Thêm mới</button>
       </div>
     </div>
     <Table
@@ -15,12 +15,12 @@
       <template v-slot:required="{rowData}">
         <div class="action-item">
           <div class="row-text">{{ rowData.numConfirmationsRequired }}</div>
-          <button class="btn btn-edit" @click.stop="handleEdit(rowData)">Edit</button></div>
+          <button class="btn btn-edit" @click.stop="handleEdit(rowData)">Thay đổi</button></div>
       </template>
       <template v-slot:action="{rowData}">
         <div class="action">
-          <div class="action-item"><button class="btn-size deposit-btn btn-normal" @click.stop="handleDeposit(rowData)">Deposit</button></div>
-          <div class="action-item"><button class="btn withdraw-btn" @click.stop="handleWithdraw(rowData)">Withdraw</button></div>
+          <div class="action-item"><button class="btn-size deposit-btn btn-normal" @click.stop="handleDeposit(rowData)">Nạp tiền</button></div>
+          <div class="action-item"><button class="btn withdraw-btn" @click.stop="handleWithdraw(rowData)">Rút tiền</button></div>
         </div>
       </template>
     </Table>
@@ -89,11 +89,11 @@ export default {
         { template: 'owners' }
       ],
       columns: [
-        { name: 'Name', field: 'name' },
-        { name: 'Address', field: 'address', unShorten: true },
-        { name: 'Balance', field: 'balance' },
-        { name: 'Required Confirmations', field: 'numConfirmationsRequired', template: 'required' },
-        { name: 'Action', template: 'action' }
+        { name: 'Tên ví', field: 'name' },
+        { name: 'Địa chỉ', field: 'address', unShorten: true },
+        { name: 'Số dư', field: 'balance' },
+        { name: 'Số người cần xác nhận', field: 'numConfirmationsRequired', template: 'required' },
+        { name: 'Thao tác', template: 'action' }
       ],
       columnOwner: [
         { name: 'Name', field: 'name', input: 'input' },
@@ -134,9 +134,7 @@ export default {
   methods: {
     async openWalletDetail(wallet) {
       try {
-        console.log(wallet)
         const walletDetail = await get(new Web3(window.ethereum), this.account, wallet.address)
-        console.log(walletDetail)
         if (walletDetail) {
           this.$store.dispatch('wallet/setWallet', walletDetail)
           this.$store.dispatch('app/displaySidebar', true)
@@ -152,10 +150,7 @@ export default {
         if (!this.account) {
           return false
         }
-        console.log(this.account)
         const walletList = await getWalletList(this.account)
-        console.log(walletList)
-
         this.wallets = walletList
       } catch (error) {
         console.log(error)
@@ -229,14 +224,18 @@ export default {
           this.wallets = this.wallets.map(wallet => wallet.id !== this.dataForm.id ? wallet : this.dataForm)
           break
         }
-        case 'add':
+        case 'add': {
           this.wallets.push(this.dataForm)
           break
-        case 'deposit': 
-          console.log("handling...")
-         this.deposit()
-         break
-
+        }
+        case 'deposit': {
+          this.deposit()
+          break
+        }
+        case 'withdraw': {
+          this.withdraw()
+          break
+        }
         default:
           break
       }
@@ -260,26 +259,34 @@ export default {
         field: 'numConfirmationsRequired'
       }]
     },
+
     async handleDeposit(wallet) {
       this.dialogData = {
         ...this.dialogData,
-        title: 'Deposit',
+        title: 'Nạp tiền vào ví',
         dialogVisible: true,
         template: 'footerDialog',
         type: 'deposit',
         action: 'deposit'
       }
+      this.dataForm = {
+        wallet: wallet.address
+      }
       this.formData = [
         {
+          type: 'text',
+          label: 'Địa chỉ ví',
+          field: 'wallet'
+        },
+        {
           type: 'number',
-          label: 'Amount(ETH)',
-          field: 'balance'
+          label: 'Số tiền (ETH))',
+          field: 'amount'
         }
       ]
-      console.log('deposit', wallet)
-      
     },
     async deposit() {
+      const { wallet, amount } = this.dataForm
       if (!this.web3) {
         this.$message({
           message: 'You must unlock Metamask',
@@ -287,64 +294,75 @@ export default {
         })
         return
       }
-
-      // fake data
-      let depositValue = '29374'
-
-      // depositValue in deposit input
-      const value = Web3.utils.toBN(depositValue)
+      const value = Web3.utils.toBN(amount)
       const zero = Web3.utils.toBN(0)
-
       if (value.gt(zero)) {
         await deposit(this.web3, this.account, { value, wallet })
-        // set depositValue
-        depositValue = '0'
-        const valueEther = this.web3.utils.fromWei(depositValue.toString(), 'ether')
-        this.$store.dispatch('web3/updateBalance', {
-          address: wallet,
-          balance: Number(Number(valueEther).toFixed(4))
-        })
-        const balance = this.web3.utils.fromWei(
-          await this.web3.eth.getBalance(this.account),
-          'ether'
-        )
-        const newBalance = Number(balance).toFixed(4)
-        this.$store.dispatch('web3/updateAccount', {
-          account: this.account,
-          balance: newBalance,
-          web3: this.web3
-        })
+        // depositValue = '0'
+        // const valueEther = this.web3.utils.fromWei(depositValue.toString(), 'ether')
+
+        // this.$store.dispatch('web3/updateBalance', {
+        //   address: wallet,
+        //   balance: Number(Number(valueEther).toFixed(4))
+        // })
+
+        // const balance = this.web3.utils.fromWei(
+        //   await this.web3.eth.getBalance(this.account),
+        //   'ether'
+        // )
+
+        // const newBalance = Number(balance).toFixed(4)
+        // this.$store.dispatch('web3/updateAccount', {
+        //   account: this.account,
+        //   balance: newBalance,
+        //   web3: this.web3
+        // })
+
         this.$message({
           message: 'Deposit successfully',
           type: 'success'
         })
       }
-
       // need close form
-      
     },
     async handleWithdraw(wallet) {
-
       this.dialogData = {
         ...this.dialogData,
-        title: 'Withdraw',
+        title: 'Yêu cầu rút tiền',
         dialogVisible: true,
         template: 'footerDialog',
         type: 'withdraw',
         action: 'withdraw'
       }
+      this.dataForm = {
+        wallet: wallet.address
+      }
       this.formData = [
         {
+          type: 'text',
+          label: 'Rút từ ví',
+          field: 'wallet'
+        },
+        {
           type: 'number',
-          label: 'Amount(ETH)',
-          field: 'balance'
+          label: 'Số tiền (ETH)',
+          field: 'amount'
         },
         {
           type: 'text',
-          label: 'Address',
-          field: 'address'
+          label: 'Địa chỉ nhận',
+          field: 'creditAddress'
+        },
+        {
+          type: 'text',
+          label: 'Lý do rút tiền',
+          field: 'reason'
         }
       ]
+    },
+
+    async withdraw() {
+      const { wallet, creditAddress, amount } = this.dataForm
 
       if (!this.web3) {
         this.$message({
@@ -355,10 +373,7 @@ export default {
       }
 
       // fake data withDrawValue
-      const withDrawValue = '.12386'
-      const address = 'address'
-
-      const value = Web3.utils.toBN(withDrawValue)
+      const value = Web3.utils.toBN(amount)
       const zero = Web3.utils.toBN(0)
 
       if (value.gt(zero)) {
@@ -367,8 +382,8 @@ export default {
             throw new Error('No web3')
           }
           await submitTransaction(this.web3, this.account, {
-            value: withDrawValue.toString(),
-            destination: address,
+            value,
+            destination: creditAddress,
             data: 'dab',
             token: '0x0000000000000000000000000000000000000000',
             wallet
@@ -377,14 +392,14 @@ export default {
             message: 'Withdraw ETH successfully',
             type: 'success'
           })
+
           // close form, reset value
         } catch (error) {
           console.log(error)
         }
       }
-
-
     },
+
     handleAddOwner() {
       this.wallet.owners.push({
         id: '',
