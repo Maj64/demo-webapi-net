@@ -81,7 +81,7 @@ export default {
       },
       dataForm: {},
       formData: [],
-      formList: [ 
+      formList: [
         { type: 'text', label: 'Tên ví', field: 'name' },
         { type: 'number', label: 'Số người cần xác nhận', field: 'numConfirmationsRequired' },
         { template: 'owners' }
@@ -193,7 +193,7 @@ export default {
         owners: [{
           name: '',
           address: ''
-      }] }
+        }] }
       this.formData = [...this.formList]
     },
     handleCancel() {
@@ -229,9 +229,9 @@ export default {
         }
       } catch (error) {
         this.$message({
-            message: error.message,
-            type: 'warning'
-          })
+          message: error.message,
+          type: 'warning'
+        })
       }
     },
     handleSubmit() {
@@ -261,20 +261,34 @@ export default {
     handleEdit(rowData) {
       this.dialogData = {
         ...this.dialogData,
-        title: 'Edit Number Required Confirmations',
+        title: 'Chỉnh sửa số người xác nhận',
         dialogVisible: true,
         template: 'footerDialog',
         type: 'edit'
       }
       this.dataForm = {
         ...rowData,
-        numConfirmationsRequired: rowData.numConfirmationsRequired
+        numConfirmationsRequired: rowData.numConfirmationsRequired,
+        wallet: rowData.address,
+        name: rowData.name
       }
-      this.formData = [{
+      this.formData = [
+      {
+        type: 'text',
+        label: 'Tên ví',
+        field: 'name'
+      },
+      {
+        type: 'text',
+        label: 'Địa chỉ ví',
+        field: 'wallet'
+      },
+      {
         type: 'number',
         label: 'Required Confirmations',
         field: 'numConfirmationsRequired'
-      }]
+      }
+    ]
     },
 
     async handleDeposit(wallet) {
@@ -287,9 +301,15 @@ export default {
         action: 'deposit'
       }
       this.dataForm = {
-        wallet: wallet.address
+        wallet: wallet.address,
+        name: wallet.name
       }
       this.formData = [
+      {
+        type: 'text',
+        label: 'Tên ví',
+        field: 'name'
+       },
         {
           type: 'text',
           label: 'Địa chỉ ví',
@@ -297,7 +317,7 @@ export default {
         },
         {
           type: 'number',
-          label: 'Số tiền (ETH))',
+          label: 'Số tiền (ETH)',
           field: 'amount'
         }
       ]
@@ -352,9 +372,15 @@ export default {
         action: 'withdraw'
       }
       this.dataForm = {
-        wallet: wallet.address
+        wallet: wallet.address,
+        name: wallet.name
       }
       this.formData = [
+      {
+        type: 'text',
+        label: 'Tên ví',
+        field: 'name'
+      },
         {
           type: 'text',
           label: 'Rút từ ví',

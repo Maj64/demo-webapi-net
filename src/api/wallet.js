@@ -50,13 +50,13 @@ export async function deposit(web3, account, params) {
 }
 
 export async function createWallet(web3, account, params) {
-    const { name, numConfirmationsRequired, owners } = params
-    Wallet.setProvider(web3.currentProvider)
+  const { name, numConfirmationsRequired, owners } = params
+  Wallet.setProvider(web3.currentProvider)
 
-    const wallet = await Wallet.new(name, numConfirmationsRequired, owners, {
-        from: account
-    })
-    return await get(web3, account, wallet.address)
+  const wallet = await Wallet.new(name, numConfirmationsRequired, owners, {
+    from: account
+  })
+  return await get(web3, account, wallet.address)
 }
 
 export async function importWallet(web3, account, params) {
@@ -121,7 +121,6 @@ export async function getTransactionsApi(web3, account, params) {
     transactions
   }
 }
-
 
 export async function getOwnersApi(web3, account, params) {
   Wallet.setProvider(web3.currentProvider)
