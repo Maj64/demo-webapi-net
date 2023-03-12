@@ -82,6 +82,13 @@ export default {
     },
     async getListTransaction() {
       try {
+        if (!this.web3) {
+          this.$message({
+              message: 'You must connect to MetaMask',
+              type: 'warning'
+          })
+          return
+        }
         const wallet = this.$store.getters.wallet
         const transactions = await getTransactionsApi(this.web3, this.account, {
           address: wallet.address

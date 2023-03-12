@@ -37,9 +37,6 @@
         </div>
       </div>
     </div>
-    <div class="app-wrapper app-transaction">
-      <div class="app-header"><h2>Transaction</h2></div>
-    </div>
   </div>
 </template>
 

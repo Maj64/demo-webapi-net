@@ -3,18 +3,22 @@
     <div class="feature-container">
       <div class="feature-header">Owner</div>
       <div class="feature-item">
-        <button class="btn btn-add" @click="handleAdd">Add</button>
+        <button class="btn btn-add" @click="handleAdd">Thêm mới</button>
       </div>
     </div>
-    <Table
-      :columns="columns"
-      :data-source="owners"
-      :class-name="className"
-    />
+    <Table :columns="columns" :data-source="owners" :class-name="className">
+      <template v-slot:action="{ rowData }">
+        <div class="action">
+          <div class="action-item">
+            <button class="btn withdraw-btn" @click.stop="handleWithdraw(rowData)">Kick</button>
+          </div>
+        </div>
+      </template>
+    </Table>
     <Form :dialog-data="dialogData" :data-form="owner" :form-list="formList">
       <template v-slot:footerDialog>
-        <el-button type="info" class="btn-normal" plain>Cancel</el-button>
-        <el-button type="success" class="btn">Add</el-button>
+        <el-button type="info" class="btn-normal" plain>Huỷ</el-button>
+        <el-button type="success" class="btn" @click="handleSubmit">Thêm mới</el-button>
       </template>
     </Form>
   </div>
@@ -52,12 +56,13 @@ export default {
         template: 'footerDialog'
       },
       formList: [
-        { type: 'text', label: 'Name', field: 'name' },
-        { type: 'text', label: 'Address', field: 'address' }
+        { type: 'text', label: 'Tên người sở hữu', field: 'name' },
+        { type: 'text', label: 'Địa chỉ', field: 'address' }
       ],
       columns: [
-        { name: 'Name', field: 'name' },
-        { name: 'Address', field: 'address', unShorten: true }
+        { name: 'Người sở hữu', field: 'name' },
+        { name: 'Địa chỉ', field: 'address', unShorten: true },
+        { name: 'Thao tác', template: 'action'}
       ],
       owners: [
       ],
@@ -75,11 +80,55 @@ export default {
       this.dialogData = {
         title: 'Thêm mới',
         dialogVisible: true,
-        template: 'footerDialog'
+        template: 'footerDialog',
+        type: 'add'
+      }
+    },
+    handleSubmit() {
+      switch (this.dialogData.type) {
+        case 'add': {
+          this.handleAddOwner()
+          break
+        }
+        default:
+          break
+      }
+      this.resetData()
+    },
+    async handleAddOwner() {
+      try {
+        if (!this.web3) {
+          this.$message({
+            message: 'You must connect to MetaMask',
+            type: 'warning'
+          })
+          return
+        }
+
+        if (!this.web3.utils.isAddress(this.owner.address)) {
+          this.$message({
+            message: 'Địa chỉ người sở hữu không hợp lệ!',
+            type: 'warning'
+          })
+          return
+        }
+
+      } catch (error) {
+        this.$message({
+          message: error.message,
+          type: 'warning'
+        })
       }
     },
     async getListOwner() {
       try {
+        if (!this.web3) {
+          this.$message({
+            message: 'You must connect to MetaMask',
+            type: 'warning'
+          })
+          return
+        }
         var wallet = this.$store.getters.wallet
         const ownerList = await getOwnerListDetail(this.web3, this.account, {
           wallet: wallet.address,
@@ -105,20 +154,24 @@ export default {
 $--color-text: rgb(255, 255, 255);
 $--color-border-light: #303033;
 $--space-3: 24px;
+
 .app-container {
 
   .modal-container {
     .modal {
       background-color: rgba(99, 102, 105, 0.75);
+
       .form-container {
         color: $--color-text;
       }
     }
+
     .dialog-footer {
       display: flex;
       justify-content: space-between;
     }
   }
+
   .btn {
     outline: 0px;
     border: 0px rgb(18, 255, 128);
@@ -133,16 +186,19 @@ $--space-3: 24px;
     line-height: 1.25;
     font-size: 14px;
     padding: 8px 24px;
+
     &:hover {
       text-decoration: none;
       background-color: rgb(12, 178, 89);
     }
   }
- .feature-container {
-  display: flex;
-  margin: 0px 24px;
-  justify-content: space-between;
-  align-items: baseline;
+
+  .feature-container {
+    display: flex;
+    margin: 0px 24px;
+    justify-content: space-between;
+    align-items: baseline;
+
     .feature-header {
       color: rgb(255, 255, 255);
       font-weight: 700;
@@ -151,7 +207,8 @@ $--space-3: 24px;
       line-height: 30px;
       margin-bottom: 24px;
     }
-    .feature-item > button{
+
+    .feature-item>button {
       color: rgb(18, 255, 128);
       display: flex;
       height: 100%;
@@ -174,11 +231,11 @@ $--space-3: 24px;
         background-color: rgb(12, 178, 89);
       }
     }
- }
- .action-item {
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
- }
-}
-</style>
+  }
+
+  .action-item {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+  }
+}</style>

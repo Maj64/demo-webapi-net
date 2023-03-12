@@ -6,21 +6,19 @@
         <button class="btn btn-add" @click="handleAdd">Thêm mới</button>
       </div>
     </div>
-    <Table
-      :columns="columns"
-      :data-source="wallets"
-      :class-name="className"
-      @row-click="openWalletDetail"
-    >
-      <template v-slot:required="{rowData}">
+    <Table :columns="columns" :data-source="wallets" :class-name="className" @row-click="openWalletDetail">
+      <template v-slot:required="{ rowData }">
         <div class="action-item">
           <div class="row-text">{{ rowData.numConfirmationsRequired }}</div>
-          <button class="btn btn-edit" @click.stop="handleEdit(rowData)">Thay đổi</button></div>
+          <button class="btn btn-edit" @click.stop="handleEdit(rowData)">Thay đổi</button>
+        </div>
       </template>
-      <template v-slot:action="{rowData}">
+      <template v-slot:action="{ rowData }">
         <div class="action">
-          <div class="action-item"><button class="btn-size deposit-btn btn-normal" @click.stop="handleDeposit(rowData)">Nạp tiền</button></div>
-          <div class="action-item"><button class="btn withdraw-btn" @click.stop="handleWithdraw(rowData)">Rút tiền</button></div>
+          <div class="action-item"><button class="btn-size deposit-btn btn-normal"
+              @click.stop="handleDeposit(rowData)">Nạp tiền</button></div>
+          <div class="action-item"><button class="btn withdraw-btn" @click.stop="handleWithdraw(rowData)">Rút
+              tiền</button></div>
         </div>
       </template>
     </Table>
@@ -31,8 +29,9 @@
           <div class="action-item"><button class="btn" @click="handleAddOwner">Add</button></div>
         </div>
         <Table :class-name="classNameForm" :columns="columnOwner" :data-source="wallet.owners">
-          <template v-slot:action="{rowData}">
-            <div class="action-item"><button class="btn btn-danger" @click="handleRemoveOwner(rowData)">Remove</button></div>
+          <template v-slot:action="{ rowData }">
+            <div class="action-item"><button class="btn btn-danger" @click="handleRemoveOwner(rowData)">Remove</button>
+            </div>
           </template>
         </Table>
       </template>
@@ -132,6 +131,13 @@ export default {
   methods: {
     async openWalletDetail(wallet) {
       try {
+        if (!this.web3) {
+          this.$message({
+            message: 'You must unlock Metamask',
+            type: 'warning'
+          })
+          return
+        }
         const walletDetail = await get(new Web3(window.ethereum), this.account, wallet.address)
         if (walletDetail) {
           this.$store.dispatch('wallet/setWallet', walletDetail)
@@ -184,7 +190,8 @@ export default {
         owners: [{
           name: '',
           address: ''
-        }] }
+        }]
+      }
       this.formData = [...this.formList]
     },
     handleCancel() {
@@ -192,6 +199,13 @@ export default {
     },
     async handleCreateWallet() {
       try {
+        if (!this.web3) {
+          this.$message({
+            message: 'You must unlock Metamask',
+            type: 'warning'
+          })
+          return
+        }
         const { name, numConfirmationsRequired } = this.dataForm
         const ownerAddressList = this.wallet.owners.map((i) => i.address)
         const ownerNameList = this.wallet.owners.map(i => i.name)
@@ -414,6 +428,14 @@ export default {
         return
       }
 
+      if (!this.web3.utils.isAddress(creditAddress)) {
+        this.$message({
+          message: 'Địa chỉ người nhận không hợp lệ',
+          type: 'warning'
+        })
+        return
+      }
+
       // fake data withDrawValue
       const value = Web3.utils.toBN(amount)
       const zero = Web3.utils.toBN(0)
@@ -462,6 +484,7 @@ export default {
 $--color-text: black;
 $--color-border-light: #303033;
 $--space-3: 24px;
+
 .app-container {
 
   .owner-header {
@@ -472,15 +495,18 @@ $--space-3: 24px;
   .modal-container {
     .modal {
       background-color: rgba(99, 102, 105, 0.75);
+
       .form-container {
         color: $--color-text;
       }
     }
+
     .dialog-footer {
       display: flex;
       justify-content: space-between;
     }
   }
+
   .btn {
     outline: 0px;
     border: 0px rgb(18, 255, 128);
@@ -495,18 +521,22 @@ $--space-3: 24px;
     line-height: 1.25;
     font-size: 14px;
     padding: 8px 24px;
+
     &:hover {
       text-decoration: none;
       background-color: rgb(12, 178, 89);
     }
   }
+
   .btn-danger {
     color: #e4e8ef;
     background-color: rgb(198, 32, 35);
+
     &:hover {
       background-color: rgba(198, 32, 35, 0.6);
     }
   }
+
   .btn-normal {
     display: inline-flex;
     -webkit-box-align: center;
@@ -525,11 +555,13 @@ $--space-3: 24px;
     font-size: 16px;
     padding: 12px 24px;
     border: 0px rgb(18, 255, 128);
+
     &:hover {
       text-decoration: none;
       background-color: rgba(255, 255, 255, 0.08);
     }
   }
+
   .btn-size {
     padding: 8px 24px;
     min-width: 64px;
@@ -546,15 +578,18 @@ $--space-3: 24px;
 
   .btn-edit {
     background-color: rgb(72, 169, 166);
+
     &:hover {
       background-color: rgba(72, 169, 166, 0.6);
     }
   }
- .feature-container {
-  display: flex;
-  margin: 0px 24px;
-  justify-content: space-between;
-  align-items: baseline;
+
+  .feature-container {
+    display: flex;
+    margin: 0px 24px;
+    justify-content: space-between;
+    align-items: baseline;
+
     .feature-header {
       color: rgb(255, 255, 255);
       font-weight: 700;
@@ -563,7 +598,8 @@ $--space-3: 24px;
       line-height: 30px;
       margin-bottom: 24px;
     }
-    .feature-item > button{
+
+    .feature-item>button {
       color: rgb(18, 255, 128);
       display: flex;
       height: 100%;
@@ -586,15 +622,17 @@ $--space-3: 24px;
         background-color: rgb(12, 178, 89);
       }
     }
- }
- .action-item {
-  display: flex;
-  justify-content: flex-start;
-  gap: 60px;
-  align-items: center;
-  .row-text {
-    margin-left: 24px;
   }
- }
+
+  .action-item {
+    display: flex;
+    justify-content: flex-start;
+    gap: 60px;
+    align-items: center;
+
+    .row-text {
+      margin-left: 24px;
+    }
+  }
 }
 </style>

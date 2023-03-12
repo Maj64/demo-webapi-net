@@ -6,13 +6,14 @@
         <button class="btn btn-add" @click="handleAdd">Thêm mới</button>
       </div>
     </div>
-    <Table
-      :columns="columns"
-      :data-source="tokens"
-      :class-name="className"
-    >
-      <template v-slot:required="{rowData}">
-        <div class="action-item"><div>{{ rowData.numConfirmationsRequired }}</div><button class="btn btn-edit" @click="deposit(columnData)">Edit</button></div>
+    <Table :columns="columns" :data-source="tokens" :class-name="className">
+      <template v-slot:action="{ rowData }">
+        <div class="action">
+          <div class="action-item"><button class="btn-size deposit-btn btn-normal"
+              @click.stop="handleDeposit(rowData)">Nạp tiền</button></div>
+          <div class="action-item"><button class="btn withdraw-btn" @click.stop="handleWithdraw(rowData)">Rút
+              tiền</button></div>
+        </div>
       </template>
     </Table>
     <Form :dialog-data="dialogData" :data-form="token" :form-list="formList">
@@ -61,7 +62,8 @@ export default {
         { name: 'Ký hiệu', field: 'symbol' },
         { name: 'Số dư', field: 'balance' },
         { name: 'Địa chỉ', field: 'address' },
-        { name: 'Phần thập phân', field: 'decimals' }
+        { name: 'Phần thập phân', field: 'decimals' },
+        { name: 'Thao tác', template: 'action' }
       ],
       tokens: [],
       token: {
@@ -105,8 +107,15 @@ export default {
     },
     async getTokenList() {
       try {
-        let wallet = this.$store.getters.wallet
-        let tokens = await getTokensApi(this.web3, this.account, {
+        if (!this.web3) {
+          this.$message({
+            message: 'You must connect to MetaMask',
+            type: 'warning'
+          })
+          return
+        }
+        const wallet = this.$store.getters.wallet
+        const tokens = await getTokensApi(this.web3, this.account, {
           address: wallet.address
         })
         this.tokens = tokens.detailTokens.map(tk => {
@@ -131,8 +140,15 @@ export default {
     },
     async handleCreateToken() {
       try {
+        if (!this.web3) {
+          this.$message({
+            message: 'You must connect to MetaMask',
+            type: 'warning'
+          })
+          return
+        }
         const { name, symbol, decimals, totalSupply } = this.token
-        const wallet = await createToken(this.web3, this.account, {
+        await createToken(this.web3, this.account, {
           name,
           symbol,
           decimals,
@@ -158,20 +174,36 @@ export default {
 $--color-text: rgb(255, 255, 255);
 $--color-border-light: #303033;
 $--space-3: 24px;
+
 .app-container {
+  .btn-size {
+    padding: 8px 24px;
+    min-width: 64px;
+    border: 1px solid #303033;
+    border-radius: 6px;
+    font-weight: bold;
+    line-height: 1.25;
+    font-size: 14px;
+  }
+  .deposit-btn {
+    color: $--color-text;
+  }
 
   .modal-container {
     .modal {
       background-color: rgba(99, 102, 105, 0.75);
+
       .form-container {
         color: $--color-text;
       }
     }
+
     .dialog-footer {
       display: flex;
       justify-content: space-between;
     }
   }
+
   .btn {
     outline: 0px;
     border: 0px rgb(18, 255, 128);
@@ -186,16 +218,44 @@ $--space-3: 24px;
     line-height: 1.25;
     font-size: 14px;
     padding: 8px 24px;
+
     &:hover {
       text-decoration: none;
       background-color: rgb(12, 178, 89);
     }
   }
- .feature-container {
-  display: flex;
-  margin: 0px 24px;
-  justify-content: space-between;
-  align-items: baseline;
+
+  .btn-normal {
+    display: inline-flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    background-color: transparent;
+    outline: 0px;
+    min-width: 64px;
+    border-radius: 6px;
+    font-weight: bold;
+    line-height: 1.25;
+    text-transform: none;
+    font-size: 16px;
+    padding: 12px 24px;
+    border: 0px rgb(18, 255, 128);
+
+    &:hover {
+      text-decoration: none;
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+  }
+
+  .feature-container {
+    display: flex;
+    margin: 0px 24px;
+    justify-content: space-between;
+    align-items: baseline;
+
     .feature-header {
       color: rgb(255, 255, 255);
       font-weight: 700;
@@ -204,7 +264,8 @@ $--space-3: 24px;
       line-height: 30px;
       margin-bottom: 24px;
     }
-    .feature-item > button{
+
+    .feature-item>button {
       color: rgb(18, 255, 128);
       display: flex;
       height: 100%;
@@ -227,11 +288,12 @@ $--space-3: 24px;
         background-color: rgb(12, 178, 89);
       }
     }
- }
- .action-item {
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
- }
+  }
+
+  .action-item {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+  }
 }
 </style>
