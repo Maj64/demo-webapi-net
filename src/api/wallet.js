@@ -1,7 +1,7 @@
 const TruffleContract = require('@truffle/contract')
 const walletTruffle = require('@/build/contracts/Wallet.json')
 import axios from 'axios'
-// import { getTokenInfo, getTokenListInfo } from './token'
+import { getTokenInfo, getTokenListInfo } from './token'
 
 const Wallet = TruffleContract(walletTruffle)
 
@@ -42,14 +42,23 @@ export async function get(web3, account, wallet) {
   }
 }
 
+export async function getOwnerListDetail(web3, account, params) {
+  const { owners, wallet } = params
+  const ownerList = []
+  for (var i = 0; i < owners.length; i++) {
+    ownerList.push(await getOwner(web3, account, { wallet, ownerAddress: owners[i] }))
+  }
+  return ownerList
+}
+
 export async function getOwner(web3, account, params) {
   const { wallet, ownerAddress } = params
   Wallet.setProvider(web3.currentProvider)
   const multiSig = await Wallet.at(wallet)
   const owner = await multiSig.getOwner(ownerAddress)
   return {
-    name: owner.owner,
-    address: owner.ownerName
+    name: owner.ownerName,
+    address: owner.owner
   }
 }
 
@@ -93,7 +102,6 @@ export async function getTokensApi(web3, account, params) {
   const wallet = await Wallet.at(params.address)
   const tokens = await wallet.getTokens()
   let detailTokens = []
-  if (tokens.length != 0) { console.log(tokens) }
   detailTokens = await getTokenListInfo(web3, account, {
     wallet: params.address,
     tokens
@@ -165,7 +173,6 @@ export async function getOwnersApi(web3, account, params) {
     requests
   }
 }
-
 export async function submitRequestOwner(web3, account, params) {
   const { address, owner, data, addOwner } = params
   Wallet.setProvider(web3.currentProvider)

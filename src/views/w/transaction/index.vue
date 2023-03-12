@@ -22,11 +22,24 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import Table from '@/components/MyTableComponent/Table.vue'
+import {
+  getTransactionsApi
+} from '@/api/wallet'
+
 export default {
   name: 'Transaction',
   components: {
     Table
+  },
+  computed: {
+    ...mapGetters([
+      'provider',
+      'account',
+      'web3',
+      'wallet'
+    ])
   },
   data() {
     return {
@@ -45,14 +58,6 @@ export default {
         { name: 'Executed', field: 'executed' }
       ],
       transactions: [
-        {
-          id: 'Account 0',
-          destination: 'f8ef8939fccccccdfr483yfe89fhdfhdfhdofhdosfhoidhfodshf3dchdi',
-          value: '0.00 ETH',
-          subject: 'Tranfer 10 W2T f8ef8939fccccccdfr483yfe89fhdfhdfhdofhdosfhoidhfodshf3dchdi',
-          confirmations: 'f8ef8939fccccccdfr483yfe89fhdfhdfhdofhdosfhoidhfodshf3dchdi',
-          executed: 'yes'
-        }
       ],
       transaction: {
         id: '',
@@ -64,12 +69,44 @@ export default {
       }
     }
   },
+  mounted() {
+    this.getListTransaction()
+  },
   methods: {
     handleAdd() {
       this.dialogData = {
         title: 'Thêm mới',
         dialogVisible: true,
         template: 'footerDialog'
+      }
+    },
+    async getListTransaction() {
+      try {
+        const wallet = this.$store.getters.wallet
+        const transactions = await getTransactionsApi(this.web3, this.account, {
+          address: wallet.address
+        })
+        console.log(transactions)
+        var trans = transactions.transactions.map(tx => {
+          return {
+            id: tx.txIndex.toString(),
+            destination: tx.destination,
+            value: tx.value.toNumber().toString(),
+            subject: tx.data,
+            confirmations: tx.numConfirmations.toString(),
+            executed: tx.executed ? 'Đã thực thi' : 'Chưa thực thi'
+          }
+        })
+        this.transactions = trans
+        this.$message({
+          message: 'Lấy danh sách giao dịch thành công!',
+          type: 'success'
+        })
+      } catch (e) {
+        this.$message({
+          message: e.message,
+          type: 'warning'
+        })
       }
     }
   }

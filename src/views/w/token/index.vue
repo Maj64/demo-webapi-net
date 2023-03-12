@@ -3,7 +3,7 @@
     <div class="feature-container">
       <div class="feature-header">Token</div>
       <div class="feature-item">
-        <button class="btn btn-add" @click="handleAdd">Add</button>
+        <button class="btn btn-add" @click="handleAdd">Thêm mới</button>
       </div>
     </div>
     <Table
@@ -17,16 +17,23 @@
     </Table>
     <Form :dialog-data="dialogData" :data-form="token" :form-list="formList">
       <template v-slot:footerDialog>
-        <el-button type="info" class="btn-normal btn-cancel" plain>Cancel</el-button>
-        <el-button type="success" class="btn">Add</el-button>
+        <el-button type="info" class="btn-normal btn-cancel" plain>Huỷ</el-button>
+        <el-button type="success" class="btn" @click="handleSubmit">Thêm mới</el-button>
       </template>
     </Form>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import Table from '@/components/MyTableComponent/Table.vue'
 import Form from '@/components/MyDialogComponent/Form.vue'
+
+import {
+  getTokensApi,
+  createToken
+} from '@/api/wallet'
+
 export default {
   name: 'Token',
   components: {
@@ -41,50 +48,104 @@ export default {
         dialogVisible: false,
         template: 'footerDialog'
       },
+      dataForm: {},
+      formData: [],
       formList: [
-        { type: 'text', label: 'Name', field: 'name' },
-        { type: 'text', label: 'Multisig', field: 'multisigBalance' },
-        { type: 'text', label: 'Account balance', field: 'accountBalance' }
+        { type: 'text', label: 'Tên token', field: 'name' },
+        { type: 'number', label: 'Tổng cung', field: 'totalSupply' },
+        { type: 'text', label: 'Ký hiệu', field: 'symbol' },
+        { type: 'number', label: 'Phần thập phân', field: 'decimals' }
       ],
       columns: [
-        { name: 'Name', field: 'name' },
-        { name: 'Multisig balance', field: 'multisigBalance' },
-        { name: 'Account balance', field: 'accountBalance' }
+        { name: 'Token', field: 'name' },
+        { name: 'Ký hiệu', field: 'symbol' },
+        { name: 'Số dư', field: 'balance' },
+        { name: 'Địa chỉ', field: 'address' },
+        { name: 'Phần thập phân', field: 'decimals' }
       ],
-      tokens: [
-        {
-          name: 'W2T',
-          multisigBalance: '0',
-          accountBalance: '0'
-        }
-      ],
+      tokens: [],
       token: {
         name: '',
-        multisigBalance: '',
-        accountBalance: ''
+        symbol: '',
+        totalSupply: '',
+        decimals: ''
       }
     }
+  },
+  computed: {
+    ...mapGetters([
+      'provider',
+      'account',
+      'web3',
+      'wallet'
+    ])
   },
   mounted() {
     this.getTokenList()
   },
   methods: {
+    handleSubmit() {
+      switch (this.dialogData.type) {
+        case 'add': {
+          this.handleCreateToken()
+          break
+        }
+        default:
+          break
+      }
+      this.resetData()
+    },
     handleAdd() {
       this.dialogData = {
-        title: 'Add',
+        title: 'Tạo mới tài sản chung (Token)',
         dialogVisible: true,
-        template: 'footerDialog'
+        template: 'footerDialog',
+        type: 'add'
       }
     },
     async getTokenList() {
       try {
+        let wallet = this.$store.getters.wallet
+        let tokens = await getTokensApi(this.web3, this.account, {
+          address: wallet.address
+        })
+        this.tokens = tokens.detailTokens.map(tk => {
+          return {
+            name: tk.name,
+            symbol: tk.symbol,
+            decimals: tk.decimals.toString(),
+            balance: tk.balance.toString(),
+            address: tk.address
+          }
+        })
         this.$message({
-          message: 'GetList Owner',
+          message: 'Lấy danh sách token ví quản lý thành công',
           type: 'success'
         })
       } catch (e) {
         this.$message({
-          message: 'You must unlock Metamask',
+          message: e.message,
+          type: 'warning'
+        })
+      }
+    },
+    async handleCreateToken() {
+      try {
+        const { name, symbol, decimals, totalSupply } = this.token
+        const wallet = await createToken(this.web3, this.account, {
+          name,
+          symbol,
+          decimals,
+          total: totalSupply,
+          wallet: this.$store.getters.wallet.address
+        })
+        this.$message({
+          message: 'Tạo mới token thành công',
+          type: 'success'
+        })
+      } catch (e) {
+        this.$message({
+          message: e.message,
           type: 'warning'
         })
       }

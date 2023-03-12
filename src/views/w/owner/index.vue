@@ -8,7 +8,7 @@
     </div>
     <Table
       :columns="columns"
-      :data-source="wallet.owners"
+      :data-source="owners"
       :class-name="className"
     />
     <Form :dialog-data="dialogData" :data-form="owner" :form-list="formList">
@@ -24,11 +24,18 @@
 import { mapGetters } from 'vuex'
 import Table from '@/components/MyTableComponent/Table.vue'
 import Form from '@/components/MyDialogComponent/Form.vue'
+
+import {
+  getOwnerListDetail
+} from '@/api/wallet'
+
 export default {
   name: 'Owner',
   computed: {
     ...mapGetters([
-      'walletID',
+      'provider',
+      'account',
+      'web3',
       'wallet'
     ])
   },
@@ -53,16 +60,15 @@ export default {
         { name: 'Address', field: 'address', unShorten: true }
       ],
       owners: [
-        {
-          name: 'Account 0',
-          address: 'f8ef8939fccccccdfr483yfe89fhdfhdfhdofhdosfhoidhfodshf3dchdi'
-        }
       ],
       owner: {
         name: '',
         address: ''
       }
     }
+  },
+  mounted() {
+    this.getListOwner()
   },
   methods: {
     handleAdd() {
@@ -72,8 +78,24 @@ export default {
         template: 'footerDialog'
       }
     },
-    getListOwner() {
-
+    async getListOwner() {
+      try {
+        var wallet = this.$store.getters.wallet
+        const ownerList = await getOwnerListDetail(this.web3, this.account, {
+          wallet: wallet.address,
+          owners: wallet.owners
+        })
+        this.owners = ownerList
+        this.$message({
+          message: 'Lấy danh sách người sở hữu ví thành công',
+          type: 'success'
+        })
+      } catch (e) {
+        this.$message({
+          message: e.message,
+          type: 'warning'
+        })
+      }
     }
   }
 }

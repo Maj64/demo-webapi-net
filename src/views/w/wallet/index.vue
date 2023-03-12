@@ -101,19 +101,7 @@ export default {
       wallets: [
         {
           name: 'DKT',
-          address: '0xF2e621E72520F4Fd49e01eC78F7AB81C6acDc934',
-          balance: '100',
-          numConfirmationsRequired: 2
-        },
-        {
-          name: 'DKT',
-          address: '0x5ccca5089b8665cd8c4ff72e79c356b0c318cd0a',
-          balance: '100',
-          numConfirmationsRequired: 2
-        },
-        {
-          name: 'DKT',
-          address: '0x1215c82be553020504d383c1a057eafb1f22d16e',
+          address: '0x3a67f6cf2824b5c5793434c443ae10ce83c637be',
           balance: '100',
           numConfirmationsRequired: 2
         }
@@ -152,7 +140,10 @@ export default {
           this.$router.push(`/${wallet?.address}/home`)
         }
       } catch (error) {
-        console.log(error)
+        this.$message({
+          message: error.message,
+          type: 'warning'
+        })
       }
     },
     async getWalletList() {
