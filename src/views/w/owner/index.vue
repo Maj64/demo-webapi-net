@@ -71,6 +71,9 @@ export default {
         dialogVisible: true,
         template: 'footerDialog'
       }
+    },
+    getListOwner() {
+
     }
   }
 }

@@ -65,12 +65,28 @@ export default {
       }
     }
   },
+  mounted() {
+    this.getTokenList()
+  },
   methods: {
     handleAdd() {
       this.dialogData = {
         title: 'Add',
         dialogVisible: true,
         template: 'footerDialog'
+      }
+    },
+    async getTokenList() {
+      try {
+        this.$message({
+          message: 'GetList Owner',
+          type: 'success'
+        })
+      } catch (e) {
+        this.$message({
+          message: 'You must unlock Metamask',
+          type: 'warning'
+        })
       }
     }
   }

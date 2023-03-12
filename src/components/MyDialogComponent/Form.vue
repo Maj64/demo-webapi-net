@@ -5,7 +5,7 @@
         <div v-for="(formItem, formIndex) in formList" :key="formIndex">
           <el-form-item :label="formItem.label">
             <div v-if="formItem.type === 'text'">
-              <el-input v-model="dataForm[formItem.field]" :type="formItem.type" />
+              <el-input v-model="dataForm[formItem.field]" :type="formItem.type" :disabled="formItem.disable" />
             </div>
             <div v-if="formItem.type === 'number'">
               <el-input v-model.number="dataForm[formItem.field]" :type="formItem.type" />

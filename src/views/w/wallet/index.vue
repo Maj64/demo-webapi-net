@@ -278,12 +278,14 @@ export default {
         {
           type: 'text',
           label: 'Tên ví',
-          field: 'name'
+          field: 'name',
+          disable: true
         },
         {
           type: 'text',
           label: 'Địa chỉ ví',
-          field: 'wallet'
+          field: 'wallet',
+          disable: true
         },
         {
           type: 'number',
@@ -310,12 +312,14 @@ export default {
         {
           type: 'text',
           label: 'Tên ví',
-          field: 'name'
+          field: 'name',
+          disable: true
         },
         {
           type: 'text',
           label: 'Địa chỉ ví',
-          field: 'wallet'
+          field: 'wallet',
+          disable: true
         },
         {
           type: 'number',
@@ -381,12 +385,14 @@ export default {
         {
           type: 'text',
           label: 'Tên ví',
-          field: 'name'
+          field: 'name',
+          disable: true
         },
         {
           type: 'text',
           label: 'Rút từ ví',
-          field: 'wallet'
+          field: 'wallet',
+          disable: true
         },
         {
           type: 'number',
@@ -439,7 +445,6 @@ export default {
 
           // close form, reset value
         } catch (error) {
-          console.log(error)
           this.$message({
             message: error.message,
             type: 'warning'
