@@ -9,10 +9,12 @@
     <Table :columns="columns" :data-source="tokens" :class-name="className">
       <template v-slot:action="{ rowData }">
         <div class="action">
-          <div class="action-item"><button class="btn-size deposit-btn btn-normal"
-              @click.stop="handleDeposit(rowData)">Nạp tiền</button></div>
+          <div class="action-item"><button
+            class="btn-size deposit-btn btn-normal"
+            @click.stop="handleDeposit(rowData)"
+          >Nạp tiền</button></div>
           <div class="action-item"><button class="btn withdraw-btn" @click.stop="handleWithdraw(rowData)">Rút
-              tiền</button></div>
+            tiền</button></div>
         </div>
       </template>
     </Table>

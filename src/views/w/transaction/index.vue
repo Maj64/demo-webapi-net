@@ -84,8 +84,8 @@ export default {
       try {
         if (!this.web3) {
           this.$message({
-              message: 'You must connect to MetaMask',
-              type: 'warning'
+            message: 'You must connect to MetaMask',
+            type: 'warning'
           })
           return
         }

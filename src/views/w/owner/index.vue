@@ -62,7 +62,7 @@ export default {
       columns: [
         { name: 'Người sở hữu', field: 'name' },
         { name: 'Địa chỉ', field: 'address', unShorten: true },
-        { name: 'Thao tác', template: 'action'}
+        { name: 'Thao tác', template: 'action' }
       ],
       owners: [
       ],
@@ -112,7 +112,6 @@ export default {
           })
           return
         }
-
       } catch (error) {
         this.$message({
           message: error.message,
