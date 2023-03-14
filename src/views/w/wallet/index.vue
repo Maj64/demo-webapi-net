@@ -123,7 +123,7 @@ export default {
   },
   mounted() {
     this.$store.dispatch('app/displaySidebar', false)
-    this.getWalletList()
+    this.getWalletListData()
   },
   methods: {
     async openWalletDetail(wallet) {
@@ -149,12 +149,13 @@ export default {
         })
       }
     },
-    async getWalletList() {
+    async getWalletListData() {
+      const account = this.$store.getters.account
       try {
-        if (!this.account) {
+        if (!account) {
           return false
         }
-        const walletList = await getWalletList(this.account)
+        const walletList = await getWalletList(account)
         console.log(walletList)
         this.wallets = walletList.data.data.map(wl => {
           return {
