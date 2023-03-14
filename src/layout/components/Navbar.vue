@@ -77,7 +77,7 @@
               <div class="info-item">Connected network <div>{{ profile.connectedNetwork }}</div></div>
             </div>
             <div class="profile-btn">
-              <el-button type="info" class="btn" plain @click="handleShow">Email</el-button>
+              <el-button type="info" class="btn" plain @click="handleShow"> TeeID</el-button>
             </div>
           </div>
         </div>
@@ -173,7 +173,7 @@ export default {
     handleShow() {
       this.dialogEmailData = {
         ...this.dialogEmailData,
-        title: 'Email',
+        title: 'Kết nối ID',
         dialogVisible: true,
         template: 'footerDialog',
         type: 'show',

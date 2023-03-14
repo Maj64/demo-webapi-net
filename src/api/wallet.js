@@ -8,7 +8,7 @@ const Wallet = TruffleContract(walletTruffle)
 const service = axios.create({
   baseURL: 'http://222.255.238.183:8004', // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 5000 // request timeout
+  timeout: 50000 // request timeout
 })
 
 export function getWalletList(owners) {
@@ -28,25 +28,29 @@ export function createWalletApi(wallet) {
 }
 
 export async function get(web3, account, wallet) {
-  Wallet.setProvider(web3.currentProvider)
-  const multiSig = await Wallet.at(wallet)
-  const balance = web3.utils.fromWei(await web3.eth.getBalance(multiSig.address), 'ether')
-  const owners = await multiSig.getOwners()
-  const name = await multiSig.name()
-  const tokens = await multiSig.getTokens()
-  const numConfirmationsRequired = await multiSig.numConfirmationsRequired()
-  const detailTokens = []
-  const transactionCount = await multiSig.getTransactionCount()
-  return {
-    name,
-    address: multiSig.address,
-    balance: Number(balance).toFixed(4),
-    owners,
-    tokens,
-    numConfirmationsRequired: numConfirmationsRequired.toNumber(),
-    transactionCount,
-    transactions: [],
-    detailTokens
+  try {
+    Wallet.setProvider(web3.currentProvider)
+    const multiSig = await Wallet.at(wallet)
+    const balance = web3.utils.fromWei(await web3.eth.getBalance(multiSig.address), 'ether')
+    const owners = await multiSig.getOwners()
+    const name = await multiSig.name()
+    const tokens = await multiSig.getTokens()
+    const numConfirmationsRequired = await multiSig.numConfirmationsRequired()
+    const detailTokens = []
+    const transactionCount = await multiSig.getTransactionCount()
+    return {
+      name,
+      address: multiSig.address,
+      balance: Number(balance).toFixed(4),
+      owners,
+      tokens,
+      numConfirmationsRequired: numConfirmationsRequired.toNumber(),
+      transactionCount,
+      transactions: [],
+      detailTokens
+    }
+  } catch(e) {
+    console.log(e)
   }
 }
 
