@@ -19,6 +19,14 @@ export function getWalletList(owners) {
   })
 }
 
+export function createWalletApi(wallet) {
+  return service({
+    url: '/wallets',
+    method: 'post',
+    data: wallet
+  })
+}
+
 export async function get(web3, account, wallet) {
   Wallet.setProvider(web3.currentProvider)
   const multiSig = await Wallet.at(wallet)

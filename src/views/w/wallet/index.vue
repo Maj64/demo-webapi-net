@@ -59,6 +59,7 @@ import {
   get,
   getWalletList,
   createWallet,
+  createWalletApi,
   deposit,
   submitTransaction
 } from '@/api/wallet'
@@ -154,6 +155,7 @@ export default {
           return false
         }
         const walletList = await getWalletList(this.account)
+        console.log(walletList)
         this.wallets = walletList.data.data.map(wl => {
           return {
             name: wl.name,
@@ -227,6 +229,13 @@ export default {
             balance: Number(wallet.balance),
             numConfirmationsRequired: wallet.numConfirmationsRequired
           })
+
+          await createWalletApi({
+            name,
+            contractAddress: wallet.address,
+            owners: ownerNameList.push(this.account)
+          })
+
           this.$message({
             message: 'Create wallet successfully',
             type: 'success'
