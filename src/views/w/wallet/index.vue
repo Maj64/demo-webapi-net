@@ -100,12 +100,6 @@ export default {
         { name: 'Action', template: 'action' }
       ],
       wallets: [
-        {
-          name: 'DKT',
-          address: '0x3a67f6cf2824b5c5793434c443ae10ce83c637be',
-          balance: '100',
-          numConfirmationsRequired: 2
-        }
       ],
       wallet: {
         name: '',
@@ -160,7 +154,14 @@ export default {
           return false
         }
         const walletList = await getWalletList(this.account)
-        this.wallets = walletList
+        this.wallets = walletList.data.data.map(wl => {
+          return {
+            name: wl.name,
+            address: wl.contractAddress,
+            balance: wl.balance,
+            numConfirmationsRequired: 2
+          }
+        })
       } catch (error) {
         console.log(error)
       }

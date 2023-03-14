@@ -6,16 +6,16 @@ import { getTokenInfo, getTokenListInfo } from './token'
 const Wallet = TruffleContract(walletTruffle)
 
 const service = axios.create({
-  baseURL: 'http://222.255.238.183:8001', // url = base url + request url
+  baseURL: 'http://222.255.238.183:8004', // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // request timeout
 })
 
-export function getWalletList(account) {
+export function getWalletList(owners) {
   return service({
     url: '/wallets',
     method: 'get',
-    params: { account }
+    params: { owners }
   })
 }
 
