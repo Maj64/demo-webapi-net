@@ -53,6 +53,7 @@ const actions = {
       const web3 = new Web3(ethereum)
       const accounts = await web3.eth.getAccounts()
       const balance = web3.utils.fromWei(await web3.eth.getBalance(accounts[0]), 'ether')
+      console.log('store', accounts)
       commit('UPDATE_ACCOUNT', { web3, account: accounts[0] || '', balance: Number(balance).toFixed(4) })
     } catch (error) {
       console.log(error)

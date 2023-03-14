@@ -131,7 +131,8 @@ export default {
     ])
   },
   mounted() {
-    this['web3/getConnectionInfo']()
+    this.$store.dispatch('web3/getConnectionInfo')
+    // this['web3/getConnectionInfo']()
     this.reload()
   },
   methods: {

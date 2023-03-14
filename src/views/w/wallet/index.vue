@@ -121,9 +121,13 @@ export default {
       'web3'
     ])
   },
+  watch: {
+    account: function(newAccount, oldAccount) {
+      this.getWalletListData()
+    }
+  },
   mounted() {
     this.$store.dispatch('app/displaySidebar', false)
-    this.getWalletListData()
   },
   methods: {
     async openWalletDetail(wallet) {
@@ -151,6 +155,7 @@ export default {
     },
     async getWalletListData() {
       const account = this.$store.getters.account
+      console.log(account)
       try {
         if (!account) {
           return false
