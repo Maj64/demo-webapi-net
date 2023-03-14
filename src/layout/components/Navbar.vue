@@ -76,10 +76,21 @@
               <div class="info-item">Wallet <div>{{ profile.wallet }}</div></div>
               <div class="info-item">Connected network <div>{{ profile.connectedNetwork }}</div></div>
             </div>
+            <div class="profile-btn">
+              <el-button type="info" class="btn" plain @click="handleShow">Email</el-button>
+            </div>
           </div>
         </div>
       </el-dialog>
     </div>
+    <Form :dialog-data="dialogEmailData" :data-form="dataForm" :form-list="inputFormList">
+      <template v-slot:footerDialog>
+        <el-button type="info" class="btn-normal btn-cancel" plain @click="handleCancel">Cancel</el-button>
+        <div>
+          <el-button type="success" class="btn" @click="handleSubmit">Submit</el-button>
+        </div>
+      </template>
+    </Form>
   </div>
 </template>
 
@@ -88,6 +99,7 @@ import { mapActions, mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import ErrorLog from '@/components/ErrorLog'
+import Form from '@/components/MyDialogComponent/Form.vue'
 import { unlockAccount } from '@/api/web3'
 // import Screenfull from '@/components/Screenfull'
 // import SizeSelect from '@/components/SizeSelect'
@@ -97,7 +109,8 @@ export default {
   components: {
     Breadcrumb,
     Hamburger,
-    ErrorLog
+    ErrorLog,
+    Form
     // Screenfull,
     // SizeSelect,
     // Search
@@ -111,6 +124,18 @@ export default {
         width: '30%',
         marginTop: '12vh'
       },
+      dialogEmailData: {
+        title: '',
+        dialogVisible: false,
+        template: 'footerDialog',
+        type: null,
+        action: null,
+        nested: false
+      },
+      dataForm: {},
+      inputFormList: [
+        { type: 'text', label: 'Email', field: 'email' }
+      ],
       profile: {
         name: 'Human',
         address: null,
@@ -130,6 +155,11 @@ export default {
       'netId'
     ])
   },
+  watch: {
+    account: function(newAccount, oldAccount) {
+      this.profile.address = this.shortenString(newAccount)
+    }
+  },
   mounted() {
     this.$store.dispatch('web3/getConnectionInfo')
     // this['web3/getConnectionInfo']()
@@ -139,6 +169,20 @@ export default {
     ...mapActions(['web3/getConnectionInfo']),
     reload() {
       this.profile.address = this.account && this.shortenString(this.account)
+    },
+    handleShow() {
+      this.dialogEmailData = {
+        ...this.dialogEmailData,
+        title: 'Email',
+        dialogVisible: true,
+        template: 'footerDialog',
+        type: 'show',
+        action: 'show',
+        nested: true
+      }
+      this.dataForm = {
+        email: 'manh@gmail.com'
+      }
     },
     async connectWallet() {
       // // await this.$store.dispatch('user/connectWallet')
@@ -347,6 +391,30 @@ export default {
   .profile-container {
     display: flex;
     color: rgb(255, 255, 255);
+
+    .profile-btn {
+      display: flex;
+      justify-content: flex-end;
+      .btn {
+        outline: 0px;
+        border: 0px rgb(18, 255, 128);
+        margin: 0px;
+        vertical-align: middle;
+        min-width: 64px;
+        color: rgba(0, 0, 0, 0.87);
+        background-color: rgb(18, 255, 128);
+        box-shadow: rgb(161 163 167) 0px 0px 2px;
+        border-radius: 6px;
+        font-weight: bold;
+        line-height: 1.25;
+        font-size: 14px;
+        padding: 8px 24px;
+        &:hover {
+          text-decoration: none;
+          background-color: rgb(12, 178, 89);
+        }
+      }
+    }
     .profile-avt-wrapper {
       display: flex;
       flex-direction: column;

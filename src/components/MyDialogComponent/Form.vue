@@ -1,6 +1,6 @@
 <template>
   <div class="modal-container">
-    <el-dialog :title="dialogData.title" class="modal" :visible.sync="dialogData.dialogVisible" :close-on-click-modal="false">
+    <el-dialog :title="dialogData.title" class="modal" :visible.sync="dialogData.dialogVisible" :close-on-click-modal="false" :append-to-body="dialogData.nested">
       <el-form label-position="left" label-width="200px" :model="dataForm" class="form-container">
         <div v-for="(formItem, formIndex) in formList" :key="formIndex">
           <el-form-item :label="formItem.label">

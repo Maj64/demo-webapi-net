@@ -39,10 +39,12 @@ const actions = {
         alert('Make sure you have metamask!')
         return false
       }
-      await ethereum.on('accountsChanged', function handleAccountsChanged(accounts) {
+      await ethereum.on('accountsChanged', async function handleAccountsChanged(accounts) {
         // Update the current account when it is changed
         const newAccount = accounts[0]
-        commit('UPDATE_ACCOUNT', { ...state, account: newAccount })
+        // const accounts = await web3.eth.getAccounts()
+        const balance = web3.utils.fromWei(await web3.eth.getBalance(newAccount), 'ether')
+        commit('UPDATE_ACCOUNT', { web3, account: newAccount || '', balance: Number(balance).toFixed(4) })
       })
       await ethereum.on('disconnect', function handleDisconnect(error) {
         // Handle the 'disconnect' event when the user's account is locked
@@ -53,7 +55,6 @@ const actions = {
       const web3 = new Web3(ethereum)
       const accounts = await web3.eth.getAccounts()
       const balance = web3.utils.fromWei(await web3.eth.getBalance(accounts[0]), 'ether')
-      console.log('store', accounts)
       commit('UPDATE_ACCOUNT', { web3, account: accounts[0] || '', balance: Number(balance).toFixed(4) })
     } catch (error) {
       console.log(error)

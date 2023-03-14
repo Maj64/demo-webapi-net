@@ -1,12 +1,22 @@
 <template>
-  <div class="app-container">
+  <div
+    v-loading.lock="loadingTable"
+    class="app-container"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"
+  >
     <div class="feature-container">
       <div class="feature-header">Wallet</div>
       <div class="feature-item">
         <button class="btn btn-add" @click="handleAdd">Thêm mới</button>
       </div>
     </div>
-    <Table :columns="columns" :data-source="wallets" :class-name="className" @row-click="openWalletDetail">
+    <Table
+      :columns="columns"
+      :data-source="wallets"
+      :class-name="className"
+      @row-click="openWalletDetail"
+    >
       <template v-slot:required="{ rowData }">
         <div class="action-item">
           <div class="row-text">{{ rowData.numConfirmationsRequired }}</div>
@@ -72,6 +82,7 @@ export default {
   },
   data() {
     return {
+      loadingTable: false,
       className: 'table-container-height',
       classNameForm: 'table-container',
       dialogData: {
@@ -123,11 +134,14 @@ export default {
   },
   watch: {
     account: function(newAccount, oldAccount) {
-      this.getWalletListData()
+      console.log('old data', oldAccount)
+      console.log('new data', newAccount)
+      this.getWalletListData(newAccount)
     }
   },
   mounted() {
     this.$store.dispatch('app/displaySidebar', false)
+    this.getWalletListData(this.$store.getters.account)
   },
   methods: {
     async openWalletDetail(wallet) {
@@ -153,15 +167,14 @@ export default {
         })
       }
     },
-    async getWalletListData() {
-      const account = this.$store.getters.account
-      console.log(account)
+    async getWalletListData(account) {
+      // const account = this.$store.getters.account
       try {
         if (!account) {
           return false
         }
+        this.loadingTable = true
         const walletList = await getWalletList(account)
-        console.log(walletList)
         this.wallets = walletList.data.data.map(wl => {
           return {
             name: wl.name,
@@ -170,7 +183,9 @@ export default {
             numConfirmationsRequired: 2
           }
         })
+        this.loadingTable = false
       } catch (error) {
+        this.loadingTable = false
         console.log(error)
       }
     },
